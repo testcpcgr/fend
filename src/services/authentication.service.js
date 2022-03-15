@@ -16,9 +16,9 @@ function login(username, password) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        //body: JSON.stringify({ username, password })
-        body: JSON.stringify({   email: 'jack@gmail.com',
-        password: '1234'})
+        body: JSON.stringify({ username, password })
+        // body: JSON.stringify({   email: 'jack@gmail.com',
+        // password: '1234'})
     };
     return fetch(process.env.REACT_APP_SERVER_BASE_URL+'login', requestOptions)
         .then(handleResponse)
