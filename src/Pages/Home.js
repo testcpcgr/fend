@@ -19,7 +19,7 @@ function HomePage() {
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
     useEffect(() => {
-        console.log(process.env.REACT_APP_SERVER_BASE_URL);
+       
         getById(currentUser.id);
     }, [])
 

@@ -22,9 +22,11 @@ function login(username, password) {
         .then((response) => response.json())
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-           
+          if(typeof user.role !== "undefined" && user.message !==null)
+          {
             localStorage.setItem('currentUser', JSON.stringify(user));
             currentUserSubject.next(user);
+          }
             //return JSON.stringify( { id: 1, username: 'admin', password: 'admin', firstName: 'Admin', lastName: 'User', role:"Admin" })
             return user;
         });

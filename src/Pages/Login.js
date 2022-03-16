@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { authenticationService } from '../services/authentication.service';
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {  
+function LoginPage() {
     const history = useNavigate();
     useEffect(() => {
         if (authenticationService.currentUserValue) {
@@ -23,20 +23,24 @@ function LoginPage() {
 
     const handleLogin = () => {
         if (username && password) {
-            console.log(username, password);
             setErrorText("");
             setErrorController("");
             authenticationService.login(username, password)
                 .then(
-                    user => {                       
-                        if (user.role === "user") {
-                            history("/user");
+                    user => {
+                        if (typeof user.message === "undefined") {
+                            if (user.role === "user") {
+                                history("/user");
+                            }
+                            if (user.role === "User") {
+                                history("/user");
+                            }
+                            if (user.role.toString().toLowerCase() === "admin") {
+                                history("/");
+                            }
                         }
-                        if (user.role  === "User") {
-                            history("/user");
-                        }
-                        if (user.role.toString().toLowerCase() === "admin") {                       
-                            history("/");
+                        else {
+                            history("/Login")
                         }
                     }
                 );
@@ -44,7 +48,7 @@ function LoginPage() {
             setErrorText("Select Employee Name & Write Password");
         }
     };
-    
+
     return (
         <div
             style={{

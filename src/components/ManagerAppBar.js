@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import List from "@material-ui/core/List";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import SettingsIcon from "@material-ui/icons/Settings";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -23,7 +23,8 @@ import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
 import AlarmIcon from "@mui/icons-material/Alarm";
 import { authenticationService } from '../services/authentication.service';
-import { history } from '../helpers/history';
+
+//import { history } from '../helpers/history';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
+  const history = useNavigate();
   const dispatch = useDispatch();
   const menuItems = [
     {
@@ -82,7 +84,7 @@ const ManagerAppBar = (props) => {
   }, props.location);
   const handleLogOut = () => {
     authenticationService.logout();
-    history.push('/login');
+    history('/login');
   };
   return (
     <div className={classes.root}>
