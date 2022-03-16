@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { authenticationService } from '../services/authentication.service';
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {  
+function LoginPage() {
     const history = useNavigate();
     useEffect(() => {
         if (authenticationService.currentUserValue) {
@@ -23,24 +23,24 @@ function LoginPage() {
 
     const handleLogin = () => {
         if (username && password) {
-            console.log(username, password);
             setErrorText("");
             setErrorController("");
             authenticationService.login(username, password)
                 .then(
                     user => {
-                        // const { from } = this.props.location.state || { from: { pathname: "/" } };
-                        // this.props.history.push(from);
-                       // console.log(user);
-                        if (user.role === "user") {
-                            history("/user");
+                        if (typeof user.message === "undefined") {
+                            if (user.role === "user") {
+                                history("/user");
+                            }
+                            if (user.role === "User") {
+                                history("/user");
+                            }
+                            if (user.role.toString().toLowerCase() === "admin") {
+                                history("/");
+                            }
                         }
-                        if (user.role  === "User") {
-                            history("/user");
-                        }
-                        if (user.role === "admin") {
-                        //if (user.role === "1") {
-                            history("/");
+                        else {
+                            history("/Login")
                         }
                     }
                 );
@@ -48,38 +48,6 @@ function LoginPage() {
             setErrorText("Select Employee Name & Write Password");
         }
     };
-    // const authorised = useSelector((state) => state.authorised);
-    // useEffect(() => {
-    //     if (authorised === "Wrong Username or Password") {
-    //         setErrorText("Wrong Username or Password");
-    //         setErrorController(true);
-    //     } else if (authorised === "Data base connection issue") {
-    //         setErrorText("Data base connection issue");
-    //         setErrorController(true);
-    //     } else {
-    //         setErrorText("");
-    //         setErrorController(false);
-    //         if (authorised?.role?._ === "user") {
-    //             history.push("/user");
-    //         }
-    //         if (authorised?.role?._ === "User") {
-    //             history.push("/user");
-    //         }
-    //         if (authorised?.role?._ === "Manager") {
-    //             history.push("/manager");
-    //         }
-    //         if (authorised?.role?._ === "Admin") {
-    //             history.push("/admin");
-    //         }
-    //     }
-    // }, [authorised]);
-    // //logout on refresh
-    // useEffect(() => {
-    //     if (!authorised?.employeeID?._) {
-    //         history.push("/");
-    //     }
-    // }, [authorised]);
-
 
     return (
         <div

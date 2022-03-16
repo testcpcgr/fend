@@ -23,9 +23,10 @@ function App() {
   useEffect(() => {
 
     authenticationService.currentUser.subscribe(x => {
+      if (x !== null && typeof x.message === "undefined") {    
       setCurrentUser(x);
       setIsAdminFlag(x && x.role === Role.Admin);
-
+      }
     });
   });
 
