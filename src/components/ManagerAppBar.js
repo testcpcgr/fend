@@ -22,6 +22,8 @@ import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
 import AlarmIcon from "@mui/icons-material/Alarm";
+import { authenticationService } from '../services/authentication.service';
+import { history } from '../helpers/history';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,7 +81,8 @@ const ManagerAppBar = (props) => {
     setLocation(props.location);
   }, props.location);
   const handleLogOut = () => {
-    dispatch(logOutEmployee());
+    authenticationService.logout();
+    history.push('/login');
   };
   return (
     <div className={classes.root}>

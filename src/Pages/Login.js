@@ -28,18 +28,14 @@ function LoginPage() {
             setErrorController("");
             authenticationService.login(username, password)
                 .then(
-                    user => {
-                        // const { from } = this.props.location.state || { from: { pathname: "/" } };
-                        // this.props.history.push(from);
-                       // console.log(user);
+                    user => {                       
                         if (user.role === "user") {
                             history("/user");
                         }
                         if (user.role  === "User") {
                             history("/user");
                         }
-                        if (user.role === "admin") {
-                        //if (user.role === "1") {
+                        if (user.role.toString().toLowerCase() === "admin") {                       
                             history("/");
                         }
                     }
@@ -48,39 +44,7 @@ function LoginPage() {
             setErrorText("Select Employee Name & Write Password");
         }
     };
-    // const authorised = useSelector((state) => state.authorised);
-    // useEffect(() => {
-    //     if (authorised === "Wrong Username or Password") {
-    //         setErrorText("Wrong Username or Password");
-    //         setErrorController(true);
-    //     } else if (authorised === "Data base connection issue") {
-    //         setErrorText("Data base connection issue");
-    //         setErrorController(true);
-    //     } else {
-    //         setErrorText("");
-    //         setErrorController(false);
-    //         if (authorised?.role?._ === "user") {
-    //             history.push("/user");
-    //         }
-    //         if (authorised?.role?._ === "User") {
-    //             history.push("/user");
-    //         }
-    //         if (authorised?.role?._ === "Manager") {
-    //             history.push("/manager");
-    //         }
-    //         if (authorised?.role?._ === "Admin") {
-    //             history.push("/admin");
-    //         }
-    //     }
-    // }, [authorised]);
-    // //logout on refresh
-    // useEffect(() => {
-    //     if (!authorised?.employeeID?._) {
-    //         history.push("/");
-    //     }
-    // }, [authorised]);
-
-
+    
     return (
         <div
             style={{
