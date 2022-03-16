@@ -3,10 +3,11 @@ import './App.css';
 import LoginPage from "./Pages/Login";
 import HomePage from "./Pages/Home";
 import AdminUsersPage from "./Pages/AdminUsers";
+import DMDashboardPage from "./Pages/DM/dashboard";
 import { Role } from './helpers/Roles';
 import { history } from './helpers/history';
 import { authenticationService } from './services/authentication.service';
-import  PrivateRoute  from './components/PrivateRoute';
+import PrivateRoute from './components/PrivateRoute';
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,17 +21,17 @@ function App() {
   const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdminFlag] = useState();
   useEffect(() => {
-    
+
     authenticationService.currentUser.subscribe(x => {
-      setCurrentUser (x);
-      setIsAdminFlag (x && x.role === Role.Admin);
+      setCurrentUser(x);
+      setIsAdminFlag(x && x.role === Role.Admin);
 
     });
   });
 
-  const logout = ()=> {
-      authenticationService.logout();
-      history.push('/login');
+  const logout = () => {
+    authenticationService.logout();
+    history.push('/login');
   }
 
   return (
@@ -46,13 +47,16 @@ function App() {
           </nav>
         }
         <Routes>
-          <Route exact path='/' element={<PrivateRoute />}>
-            <Route exact path='/' element={<HomePage />} />
-          </Route>
           <Route path='/AdminUser' element={<PrivateRoute />}>
             <Route path='/AdminUser' element={<AdminUsersPage />} />
           </Route>
+          <Route path='/DM/DMDashboardPage' element={<PrivateRoute />}>
+            <Route path='/DM/DMDashboardPage' element={<DMDashboardPage />} />
+          </Route>
           <Route path='/Login' element={<LoginPage />} />
+          <Route exact path='/' element={<PrivateRoute />}>
+            <Route exact path='/' element={<HomePage />} />
+          </Route>
         </Routes>
       </div>
     </Router>

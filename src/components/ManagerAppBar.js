@@ -54,7 +54,7 @@ const ManagerAppBar = (props) => {
     {
       text: "Driver Monitoring",
       icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-      path: "/drivermonitoring/index",
+      path: "/DM/DMDashboardPage",
     }
   ];
   useEffect(() => {
