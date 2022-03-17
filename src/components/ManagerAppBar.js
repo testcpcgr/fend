@@ -89,10 +89,13 @@ const ManagerAppBar = (props) => {
     authenticationService.logout();
     history('/login');
   };
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(!open);
+  const [dmmenuopen, setDMOpen] = React.useState(false);
+  const [reportmenuopen, setReportOpen] = React.useState(false);
+  const handleDMClick = () => {
+    setDMOpen(!dmmenuopen);
+  };
+  const handleReportClick = () => {
+    setReportOpen(!reportmenuopen);
   };
   return (
     <div className={classes.root}>
@@ -140,14 +143,14 @@ const ManagerAppBar = (props) => {
               </ListItemButton>
             </Link>
             <div>
-              <ListItemButton onClick={handleClick}>
+              <ListItemButton onClick={handleDMClick}>
                 <ListItemIcon>
                   <GroupIcon style={{ color: "#3F51B5" }} />
                 </ListItemIcon>
                 <ListItemText primary="Driver Monitoring" />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {dmmenuopen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={open} timeout="auto" unmountOnExit>
+              <Collapse in={dmmenuopen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   <Link
                     to="/DM/DMDashboardPage"
@@ -173,7 +176,42 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
+
+              <ListItemButton onClick={handleReportClick}>
+                <ListItemIcon>
+                  <GroupIcon style={{ color: "#3F51B5" }} />
+                </ListItemIcon>
+                <ListItemText primary="Reports" />
+                {reportmenuopen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <Link
+                    to="/Reports/ReportDashboard"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="WIP report"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to="/"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="dummy report"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                </List>
+              </Collapse>
             </div>
+    
           </List>
           <div onClick={handleLogOut}>
             <ListItem button>

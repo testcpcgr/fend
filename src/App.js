@@ -4,6 +4,7 @@ import LoginPage from "./Pages/Login";
 import HomePage from "./Pages/Home";
 import AdminUsersPage from "./Pages/AdminUsers";
 import DMDashboardPage from "./Pages/DM/dashboard";
+import BIReports from "./Pages/BIReports/ReportDashboard";
 import { Role } from './helpers/Roles';
 import { history } from './helpers/history';
 import { authenticationService } from './services/authentication.service';
@@ -49,11 +50,14 @@ function App() {
           </nav>
         } */}
         <Routes>
-          <Route path='/AdminUser' element={<PrivateRoute />}>
+          {/* <Route path='/AdminUser' element={<PrivateRoute />}>
             <Route path='/AdminUser' element={<AdminUsersPage />} />
-          </Route>
+          </Route> */}
           <Route path='/DM/DMDashboardPage' element={<PrivateRoute />}>
             <Route path='/DM/DMDashboardPage' element={<DMDashboardPage />} />
+          </Route>
+          <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
+            <Route path='/Reports/ReportDashboard' element={<BIReports />} />
           </Route>
           <Route path='/Login' element={<LoginPage />} />
           <Route exact path='/' element={<PrivateRoute />}>
