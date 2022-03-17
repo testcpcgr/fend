@@ -11,20 +11,23 @@ import { useSelector, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import List from "@material-ui/core/List";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import SettingsIcon from "@material-ui/icons/Settings";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ListItemButton from "@mui/material/ListItemButton";
 import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
 import AlarmIcon from "@mui/icons-material/Alarm";
 import { authenticationService } from '../services/authentication.service';
-
-//import { history } from '../helpers/history';
+import GroupIcon from "@mui/icons-material/Group";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Collapse from "@mui/material/Collapse";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,12 +57,12 @@ const ManagerAppBar = (props) => {
       text: "Home",
       icon: <HomeIcon color="primary" />,
       path: "/",
-    },
-    {
-      text: "Driver Monitoring",
-      icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-      path: "/DM/DMDashboardPage",
     }
+    //   {
+    //     text: "Driver Monitoring",
+    //     icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
+    //     path: "/DM/DMDashboardPage",
+    //   }
   ];
   useEffect(() => {
     setDrawer(props.drawerOption);
@@ -86,6 +89,11 @@ const ManagerAppBar = (props) => {
     authenticationService.logout();
     history('/login');
   };
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
   return (
     <div className={classes.root}>
       <Drawer open={drawer} onClose={drawer} onClose={toggleDrawer(false)}>
@@ -99,7 +107,7 @@ const ManagerAppBar = (props) => {
             //alignItems: "space-between",
           }}
         >
-          <List>
+          {/* <List>
             {menuItems.map((item) => (
               <Link
                 to={item.path}
@@ -114,6 +122,58 @@ const ManagerAppBar = (props) => {
                 </ListItem>
               </Link>
             ))}
+          </List> */}
+          <List>
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <ListAltIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Home"
+                  style={{ textDecoration: "none", color: "black" }}
+                  classes={{ primary: classes.listItemText }}
+                />
+              </ListItemButton>
+            </Link>
+            <div>
+              <ListItemButton onClick={handleClick}>
+                <ListItemIcon>
+                  <GroupIcon style={{ color: "#3F51B5" }} />
+                </ListItemIcon>
+                <ListItemText primary="Driver Monitoring" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <Link
+                    to="/DM/DMDashboardPage"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Dashboard"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to="/"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Action"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                </List>
+              </Collapse>
+            </div>
           </List>
           <div onClick={handleLogOut}>
             <ListItem button>
@@ -122,7 +182,7 @@ const ManagerAppBar = (props) => {
               </ListItemIcon>
               <ListItemText
                 primary="Sign Out"
-                //classes={{ primary: classes.listItemText }}
+              //classes={{ primary: classes.listItemText }}
               />
             </ListItem>
           </div>

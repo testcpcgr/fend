@@ -33,12 +33,13 @@ function App() {
   const logout = () => {
     authenticationService.logout();
     history.push('/login');
+    setCurrentUser(null);
   }
 
   return (
     <Router>
       <div className="App">
-        {currentUser &&
+        {/* {currentUser &&
           <nav className="navbar navbar-expand navbar-dark bg-dark">
             <div className="navbar-nav">
               <Link to="/" className="nav-item nav-link">Home</Link>
@@ -46,7 +47,7 @@ function App() {
               <a onClick={logout} className="nav-item nav-link">Logout</a>
             </div>
           </nav>
-        }
+        } */}
         <Routes>
           <Route path='/AdminUser' element={<PrivateRoute />}>
             <Route path='/AdminUser' element={<AdminUsersPage />} />
