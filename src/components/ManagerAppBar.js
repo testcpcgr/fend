@@ -161,12 +161,23 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to="/"
+                    to="/DM/DMCreateActionPage"
                     style={{ textDecoration: "none", color: "black" }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
-                        primary="Action"
+                        primary="Create Action"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to="/DM/DMActionViewPage"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="View Action"
                         classes={{ primary: classes.listItemText }}
                       />
                     </ListItemButton>
