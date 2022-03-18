@@ -1,11 +1,12 @@
 import { authenticationService } from '../../services/authentication.service';
 import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
-import authorised from "../../reduxAction/authorised";
+import authorised from "../../reduxReduncer/authorised";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createStore, combineReducers } from 'redux';
 import { AppBar, Typography } from "@material-ui/core";
+import { Provider } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import { format } from 'react-string-format';
 import * as XLSX from 'xlsx'
@@ -87,11 +88,14 @@ const FileUpload = (props) => {
             const items = location.state.filetypes;
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' +  authenticationService.currentUserValue.token
+                },
                 body: JSON.stringify({ 'FileTypeIds': items.toString() })
             };
             fetch(
-                process.env.REACT_APP_SERVER_BASE_URL + "getFileTypeDetailByFileTypeId",
+                process.env.REACT_APP_SERVER_BASE_URL + "storage/getFileTypeDetailByFileTypeId",
                 requestOptions
             )
                 .then((response) => response.json())
@@ -142,9 +146,13 @@ const FileUpload = (props) => {
             formData.append('auth', authenticationService.currentUserValue.token);
             formData.append('email', 'jack@gmail.com');
             fetch(
-                process.env.REACT_APP_SERVER_BASE_URL + 'blobupload',
+                process.env.REACT_APP_SERVER_BASE_URL + 'storage/blobupload',
                 {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                    },
                     body: formData,
                 }
             )

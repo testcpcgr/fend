@@ -56,9 +56,9 @@ const ManagerAppBar = (props) => {
       path: "/",
     },
     {
-      text: "Driver Monitoring",
+      text: "Storage Module",
       icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-      path: "/drivermonitoring/index",
+      path: "/SM/ModuleSelection",
     }
   ];
   useEffect(() => {

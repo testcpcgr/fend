@@ -26,8 +26,12 @@ class ModuleSelection extends React.Component {
 
     componentDidMount() {
         fetch(
-            process.env.REACT_APP_SERVER_BASE_URL + "getModules", {
-            method: 'GET'
+            process.env.REACT_APP_SERVER_BASE_URL + "storage/getModules", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.state.token
+            }
         })
             .then((response) => response.json())
             .then((response) => {
@@ -39,17 +43,19 @@ class ModuleSelection extends React.Component {
     }
 
     submitSelection = (event) => {
-        console.log(event);
         this.setState({
             selectedModuleName: event.name
         });
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.state.token
+            },
             body: JSON.stringify({ 'ModuleId': event.value, 'auth': this.state.token, 'email': this.state.email }),
         };
         fetch(
-            process.env.REACT_APP_SERVER_BASE_URL + 'getFileTypesByModule',
+            process.env.REACT_APP_SERVER_BASE_URL + 'storage/getFileTypesByModule',
             requestOptions
         )
             .then((response) => response.json())
@@ -72,6 +78,7 @@ class ModuleSelection extends React.Component {
 
     handleOnChange = (event) => {
         const checked = event.target.checked;
+        console.log(checked);
         if (checked) {
             const newTypeList = this.state.selectedFileType.concat(event.target.value);
             this.setState({
@@ -90,7 +97,7 @@ class ModuleSelection extends React.Component {
         const { hasModuleSelected } = this.state;
         const { selectedModuleName } = this.state;
         const hasAnyFileSelected = this.state.selectedFileType.length;
-       
+
         const rootReducer = combineReducers({
             authorised
         });
@@ -113,37 +120,36 @@ class ModuleSelection extends React.Component {
                 <Panel value={1} index={1}>
                     <div className="col-md-12">
                         <div className="emdeb-responsive">
-                            <select onChange={e => this.submitSelection(e.target)}>
+                            <select onChange={e => this.submitSelection(e.target)} value={e=> e.target.value}>
                                 {this.state.modulesList.map(module => (
                                     <option key={module.Id} name={module.ModuleName} value={module.Id} >{module.ModuleName}</option>
                                 ))}
                             </ select>
                             {hasModuleSelected == true ?
-                                <div className="App">
+                                <div>
                                     <h3>{selectedModuleName} module included following files</h3>
-                                    <ul className="toppings-list">
-                                        {this.state.fileTypeList.map(fileType => {
-                                            return (
-                                                <li key={fileType.Id}>
-                                                    <div >
-                                                        <div >
-                                                            <input
-                                                                type="checkbox"
-                                                                id={'custom-checkbox-${Id}'}
-                                                                name={fileType.FileName}
-                                                                value={fileType.Id}
-                                                                onChange={e => this.handleOnChange(e)}
-                                                            />
-                                                            <label htmlFor={fileType.Id}>{fileType.FileName}</label>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                                    {this.state.fileTypeList.map((fileType, index) => {
+                                        return (
+                                            <div key={fileType.Id}>
+                                                <input style={{
+                                                    width: "20px",
+                                                    height: "20px",
+                                                    marginLeft: "0%",
+                                                }}
+                                                    type="checkbox"
+                                                    id={`custom-checkbox-${index}`}
+                                                    name={fileType.FileName}
+                                                    value={fileType.Id}
+                                                
+                                                    onChange={e => this.handleOnChange(e)}
+                                                />
+                                               <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
+                                            </div>
+                                        );
+                                    })}
                                     {
                                         hasAnyFileSelected > 0 ?
-                                            <Link to={'/FileUpload'} state={{ filetypes: this.state.selectedFileType }}>
+                                            <Link to={'/SM/FileUpload'} state={{ filetypes: this.state.selectedFileType }}>
                                                 Next
                                             </Link>
                                             :
