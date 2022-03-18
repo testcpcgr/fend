@@ -97,7 +97,7 @@ function LoginPage() {
                                 justifyContent: "space-between",
                             }}
                         >
-                            <img
+                            {/* <img
                                 src={ZueLogo}
                                 style={{
                                     width: "70px",
@@ -116,7 +116,7 @@ function LoginPage() {
                                     // paddingLeft: 50,
                                 }}
                                 alt="NHMS LOGO"
-                            />
+                            /> */}
                         </div>
                         {/* <Typography style={{ fontSize: 20, color: "#1888C6" }}>
               ZUE PORTAL

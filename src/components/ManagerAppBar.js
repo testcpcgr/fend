@@ -28,6 +28,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
+import PermissionProvider from './PermissionProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,10 +90,13 @@ const ManagerAppBar = (props) => {
     authenticationService.logout();
     history('/login');
   };
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(!open);
+  const [dmmenuopen, setDMOpen] = React.useState(false);
+  const [reportmenuopen, setReportOpen] = React.useState(false);
+  const handleDMClick = () => {
+    setDMOpen(!dmmenuopen);
+  };
+  const handleReportClick = () => {
+    setReportOpen(!reportmenuopen);
   };
   return (
     <div className={classes.root}>
@@ -107,22 +111,6 @@ const ManagerAppBar = (props) => {
             //alignItems: "space-between",
           }}
         >
-          {/* <List>
-            {menuItems.map((item) => (
-              <Link
-                to={item.path}
-                style={{ textDecoration: "none", color: "black" }}
-              >
-                <ListItem button key={item.text}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    classes={{ primary: classes.listItemText }}
-                  />
-                </ListItem>
-              </Link>
-            ))}
-          </List> */}
           <List>
             <Link
               to="/"
@@ -140,18 +128,19 @@ const ManagerAppBar = (props) => {
               </ListItemButton>
             </Link>
             <div>
-              <ListItemButton onClick={handleClick}>
+              <ListItemButton onClick={handleDMClick}>
                 <ListItemIcon>
                   <GroupIcon style={{ color: "#3F51B5" }} />
                 </ListItemIcon>
                 <ListItemText primary="Driver Monitoring" />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {dmmenuopen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={open} timeout="auto" unmountOnExit>
+              <Collapse in={dmmenuopen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   <Link
                     to="/DM/DMDashboardPage"
                     style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Driver Monitoring' }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -163,6 +152,7 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMCreateActionPage"
                     style={{ textDecoration: "none", color: "black" }}
+                   
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -174,6 +164,7 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMActionViewPage"
                     style={{ textDecoration: "none", color: "black" }}
+                   
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -184,6 +175,85 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
+
+            
+
+
+
+              <ListItemButton onClick={handleReportClick}>
+                <ListItemIcon>
+                  <GroupIcon style={{ color: "#3F51B5" }} />
+                </ListItemIcon>
+                <ListItemText primary="Reports" />
+                {reportmenuopen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>                 
+                    <Link
+                      to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                      style={{ textDecoration: "none", color: "black" }}
+                      state={{ ReportType: 'Wipsam' }}
+                    >
+                      <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemText
+                          primary="Wipsam"
+                          classes={{ primary: classes.listItemText }}
+                        />
+                      </ListItemButton>
+                    </Link>                   
+                  
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Wipsam Management' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Wipsam Management"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Wipsam PCA' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Wipsam PCA"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Audit Report' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Audit Report"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Pricing Tool' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Price Report"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                </List>
+              </Collapse>
+
+
             </div>
           </List>
           <div onClick={handleLogOut}>
