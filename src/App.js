@@ -6,7 +6,9 @@ import AdminUsersPage from "./Pages/AdminUsers";
 import { Role } from './helpers/Roles';
 import { history } from './helpers/history';
 import { authenticationService } from './services/authentication.service';
-import  PrivateRoute  from './components/PrivateRoute';
+import PrivateRoute from './components/PrivateRoute';
+import FileUpload from "./Pages/SM/FileUpload";
+import ModuleSelection from "./Pages/SM/ModuleSelection";
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,18 +22,18 @@ function App() {
   const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdminFlag] = useState();
   useEffect(() => {
-    
+
     authenticationService.currentUser.subscribe(x => {
-      if (x !== null && typeof x.message === "undefined") {    
-      setCurrentUser(x);
-      setIsAdminFlag(x && x.role === Role.Admin);
+      if (x !== null && typeof x.message === "undefined") {
+        setCurrentUser(x);
+        setIsAdminFlag(x && x.role === Role.Admin);
       }
     });
   });
 
-  const logout = ()=> {
-      authenticationService.logout();
-      history.push('/login');
+  const logout = () => {
+    authenticationService.logout();
+    history.push('/login');
   }
 
   return (
@@ -50,9 +52,13 @@ function App() {
           <Route exact path='/' element={<PrivateRoute />}>
             <Route exact path='/' element={<HomePage />} />
           </Route>
-          <Route path='/AdminUser' element={<PrivateRoute />}>
-            <Route path='/AdminUser' element={<AdminUsersPage />} />
+          <Route path='/SM/FileUpload' element={<PrivateRoute />}>
+            <Route path="/SM/FileUpload/" strict exact element={<FileUpload />} />
           </Route>
+          <Route path='/SM/ModuleSelection' element={<PrivateRoute />}>
+            <Route path="/SM/ModuleSelection/" element={<ModuleSelection />} />
+          </Route>
+
           <Route path='/Login' element={<LoginPage />} />
         </Routes>
       </div>
