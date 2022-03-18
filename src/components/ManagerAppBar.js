@@ -133,6 +133,22 @@ const ManagerAppBar = (props) => {
                 />
               </ListItemButton>
             </Link>
+            <Link
+              to="/SM/ModuleSelection"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <ListAltIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Storage Module"
+                  style={{ textDecoration: "none", color: "black" }}
+                  classes={{ primary: classes.listItemText }}
+                />
+              </ListItemButton>
+              
+            </Link>
             <div>
               <ListItemButton onClick={handleDMClick}>
                 <ListItemIcon>
