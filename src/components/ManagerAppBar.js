@@ -28,6 +28,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
+import PermissionProvider from './PermissionProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -110,22 +111,6 @@ const ManagerAppBar = (props) => {
             //alignItems: "space-between",
           }}
         >
-          {/* <List>
-            {menuItems.map((item) => (
-              <Link
-                to={item.path}
-                style={{ textDecoration: "none", color: "black" }}
-              >
-                <ListItem button key={item.text}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    classes={{ primary: classes.listItemText }}
-                  />
-                </ListItem>
-              </Link>
-            ))}
-          </List> */}
           <List>
             <Link
               to="/"
@@ -155,21 +140,11 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMDashboardPage"
                     style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Driver Monitoring' }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
                         primary="Dashboard"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to="/"
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Action"
                         classes={{ primary: classes.listItemText }}
                       />
                     </ListItemButton>
@@ -185,25 +160,64 @@ const ManagerAppBar = (props) => {
                 {reportmenuopen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
+                <List component="div" disablePadding>                 
+                    <Link
+                      to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                      style={{ textDecoration: "none", color: "black" }}
+                      state={{ ReportType: 'Wipsam' }}
+                    >
+                      <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemText
+                          primary="Wipsam"
+                          classes={{ primary: classes.listItemText }}
+                        />
+                      </ListItemButton>
+                    </Link>                   
+                  
                   <Link
-                    to="/Reports/ReportDashboard"
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Wipsam Management' }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
-                        primary="WIP report"
+                        primary="Wipsam Management"
                         classes={{ primary: classes.listItemText }}
                       />
                     </ListItemButton>
                   </Link>
                   <Link
-                    to="/"
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Wipsam PCA' }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
-                        primary="dummy report"
+                        primary="Wipsam PCA"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Audit Report' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Audit Report"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Pricing Tool' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Price Report"
                         classes={{ primary: classes.listItemText }}
                       />
                     </ListItemButton>
@@ -211,7 +225,7 @@ const ManagerAppBar = (props) => {
                 </List>
               </Collapse>
             </div>
-    
+
           </List>
           <div onClick={handleLogOut}>
             <ListItem button>

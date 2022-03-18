@@ -2,7 +2,6 @@
 import './App.css';
 import LoginPage from "./Pages/Login";
 import HomePage from "./Pages/Home";
-import AdminUsersPage from "./Pages/AdminUsers";
 import DMDashboardPage from "./Pages/DM/dashboard";
 import BIReports from "./Pages/BIReports/ReportDashboard";
 import { Role } from './helpers/Roles';
