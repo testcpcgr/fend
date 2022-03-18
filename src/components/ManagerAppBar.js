@@ -140,7 +140,6 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMDashboardPage"
                     style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Driver Monitoring' }}
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -149,8 +148,34 @@ const ManagerAppBar = (props) => {
                       />
                     </ListItemButton>
                   </Link>
+                  <Link
+                    to="/DM/DMCreateActionPage"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Create Action"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Link
+                    to="/DM/DMActionViewPage"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="View Action"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
                 </List>
               </Collapse>
+
+            
+
+
 
               <ListItemButton onClick={handleReportClick}>
                 <ListItemIcon>
@@ -224,8 +249,9 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
-            </div>
 
+
+            </div>
           </List>
           <div onClick={handleLogOut}>
             <ListItem button>

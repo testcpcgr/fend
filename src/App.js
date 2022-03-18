@@ -3,6 +3,8 @@ import './App.css';
 import LoginPage from "./Pages/Login";
 import HomePage from "./Pages/Home";
 import DMDashboardPage from "./Pages/DM/dashboard";
+import DMActionViewPage from "./Pages/DM/view-actions";
+import DMCreateActionPage from "./Pages/DM/create-action";
 import BIReports from "./Pages/BIReports/ReportDashboard";
 import { Role } from './helpers/Roles';
 import { history } from './helpers/history';
@@ -23,9 +25,9 @@ function App() {
   useEffect(() => {
 
     authenticationService.currentUser.subscribe(x => {
-      if (x !== null && typeof x.message === "undefined") {    
-      setCurrentUser(x);
-      setIsAdminFlag(x && x.role === Role.Admin);
+      if (x !== null && typeof x.message === "undefined") {
+        setCurrentUser(x);
+        setIsAdminFlag(x && x.role === Role.Admin);
       }
     });
   });
@@ -54,6 +56,12 @@ function App() {
           </Route> */}
           <Route path='/DM/DMDashboardPage' element={<PrivateRoute />}>
             <Route path='/DM/DMDashboardPage' element={<DMDashboardPage />} />
+          </Route>
+          <Route path='/DM/DMActionViewPage' element={<PrivateRoute />}>
+            <Route path='/DM/DMActionViewPage' element={<DMActionViewPage />} />
+          </Route>
+          <Route path='/DM/DMCreateActionPage' element={<PrivateRoute />}>
+            <Route path='/DM/DMCreateActionPage' element={<DMCreateActionPage />} />
           </Route>
           <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
             <Route path='/Reports/ReportDashboard' element={<BIReports />} />
