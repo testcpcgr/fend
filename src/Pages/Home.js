@@ -5,8 +5,6 @@ import { authenticationService } from '../services/authentication.service';
 import { backgroundColor, buttonColor, buttonTextColor } from "../Constants";
 import ManagerAppbar from "../components/ManagerAppBar";
 import { createStore, combineReducers } from 'redux';
-
-
 import authorised from "../reduxReduncer/authorised";
 
 function HomePage() {
@@ -22,7 +20,7 @@ function HomePage() {
        
         getById(currentUser.id);
     }, [])
-
+  
 
     return (
         <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
