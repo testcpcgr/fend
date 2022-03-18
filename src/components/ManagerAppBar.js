@@ -58,6 +58,12 @@ const ManagerAppBar = (props) => {
       text: "Home",
       icon: <HomeIcon color="primary" />,
       path: "/",
+
+    },
+    {
+      text: "Storage Module",
+      icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
+      path: "/SM/ModuleSelection",
     }
     //   {
     //     text: "Driver Monitoring",
@@ -127,6 +133,22 @@ const ManagerAppBar = (props) => {
                 />
               </ListItemButton>
             </Link>
+            <Link
+              to="/SM/ModuleSelection"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <ListAltIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Storage Module"
+                  style={{ textDecoration: "none", color: "black" }}
+                  classes={{ primary: classes.listItemText }}
+                />
+              </ListItemButton>
+              
+            </Link>
             <div>
               <ListItemButton onClick={handleDMClick}>
                 <ListItemIcon>
@@ -152,7 +174,7 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMCreateActionPage"
                     style={{ textDecoration: "none", color: "black" }}
-                   
+
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -164,7 +186,7 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMActionViewPage"
                     style={{ textDecoration: "none", color: "black" }}
-                   
+
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -176,7 +198,7 @@ const ManagerAppBar = (props) => {
                 </List>
               </Collapse>
 
-            
+
 
 
 
@@ -188,22 +210,22 @@ const ManagerAppBar = (props) => {
                 {reportmenuopen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>                 
-                    <Link
-                      to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
-                      style={{ textDecoration: "none", color: "black" }}
-                      state={{ ReportType: 'Wipsam' }}
-                    >
-                      <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemText
-                          primary="Wipsam"
-                          classes={{ primary: classes.listItemText }}
-                        />
-                      </ListItemButton>
-                    </Link>                   
-                  
+                <List component="div" disablePadding>
                   <Link
-                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    style={{ textDecoration: "none", color: "black" }}
+                    state={{ ReportType: 'Wipsam' }}
+                  >
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText
+                        primary="Wipsam"
+                        classes={{ primary: classes.listItemText }}
+                      />
+                    </ListItemButton>
+                  </Link>
+
+                  <Link
+                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Wipsam Management' }}
                   >
@@ -215,7 +237,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Wipsam PCA' }}
                   >
@@ -227,7 +249,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Audit Report' }}
                   >
@@ -239,7 +261,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({roles:'Admin,Manager'}) == true ? '/Reports/ReportDashboard' : '#'}
+                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Pricing Tool' }}
                   >

@@ -10,6 +10,8 @@ import { Role } from './helpers/Roles';
 import { history } from './helpers/history';
 import { authenticationService } from './services/authentication.service';
 import PrivateRoute from './components/PrivateRoute';
+import FileUpload from "./Pages/SM/FileUpload";
+import ModuleSelection from "./Pages/SM/ModuleSelection";
 import {
   BrowserRouter as Router,
   Routes,
@@ -51,9 +53,12 @@ function App() {
           </nav>
         } */}
         <Routes>
-          {/* <Route path='/AdminUser' element={<PrivateRoute />}>
-            <Route path='/AdminUser' element={<AdminUsersPage />} />
-          </Route> */}
+          <Route path='/SM/FileUpload' element={<PrivateRoute />}>
+            <Route path="/SM/FileUpload/" strict exact element={<FileUpload />} />
+          </Route>
+          <Route path='/SM/ModuleSelection' element={<PrivateRoute />}>
+            <Route path="/SM/ModuleSelection/" element={<ModuleSelection />} />
+          </Route>
           <Route path='/DM/DMDashboardPage' element={<PrivateRoute />}>
             <Route path='/DM/DMDashboardPage' element={<DMDashboardPage />} />
           </Route>
@@ -66,6 +71,7 @@ function App() {
           <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
             <Route path='/Reports/ReportDashboard' element={<BIReports />} />
           </Route>
+
           <Route path='/Login' element={<LoginPage />} />
           <Route exact path='/' element={<PrivateRoute />}>
             <Route exact path='/' element={<HomePage />} />
