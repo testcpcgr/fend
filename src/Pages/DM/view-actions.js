@@ -48,7 +48,7 @@ class ViewActions extends React.Component {
         })
             .then((response) => response.json())
             .then((response) => {
-                console.log(response.actions)
+           
 
                 const actions = [];
                 const map = new Map();
@@ -90,6 +90,7 @@ class ViewActions extends React.Component {
             })
                 .then((response) => response.json())
                 .then((response) => {
+                  
                     const newList = this.state.responseTypeList.concat(response.result);
                     this.setState({
                         responseTypeList: newList
@@ -147,7 +148,7 @@ class ViewActions extends React.Component {
             body: JSON.stringify({ 'action_id': event.target.getAttribute("actionid"), 'response_type_id': event.target.value })
         };
         fetch(process.env.REACT_APP_SERVER_BASE_URL + 'drivermonitoring/UpdateActionResponseType', requestOptions).then(function (response) {
-            console.log(response)
+           
             return response.json();
         });
         event.preventDefault();
@@ -190,12 +191,7 @@ class ViewActions extends React.Component {
                     <ManagerAppbar drawerOption={this.drawers} location="Home" />
                 </Provider>
                 <Panel value={1} index={1}>
-                {
-                    showChat == true ?
-                        <ActionChats actionid={this.state.action_id} role={this.state.role} />
-                        :
-                        <></>
-                }
+               
                 <h1>Driver monitoring: All monitoring actions</h1>
                 <table className='center'>
                     <thead>
@@ -251,6 +247,12 @@ class ViewActions extends React.Component {
                         ))}
                     </tbody>
                 </table>
+                 {
+                    showChat == true ?
+                        <ActionChats actionid={this.state.action_id} role={this.state.role} />
+                        :
+                        <></>
+                }
                 {
                     showCommentForm == true ?
                         <CreateActionNote actionid={this.state.action_id} role={this.state.role} />

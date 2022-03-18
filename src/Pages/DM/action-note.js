@@ -49,18 +49,15 @@ const ActionNote = (props) => {
 
     return (
        
-        <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
-            <Provider store={store}>
-                <ManagerAppbar drawerOption={drawers} location="Home" />
-            </Provider>
+      
             <Panel value={1} index={1}>
                 <form onSubmit={handleSubmit}>
                     <input type="hidden" name="action_id" value='0'></input>
-                    <input type="text" name="note" onChange={handleChange}></input>
+                    <input type="text" name="note" value={note} onChange={handleChange}></input>
                     <input type="submit" value="Submit" />
                 </form>
             </Panel>
-        </div>
+       
     );
 };
 

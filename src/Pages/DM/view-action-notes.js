@@ -66,20 +66,18 @@ class ViewActionNotes extends React.Component {
             );
         };
         return (
-            <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
-                <Provider store={store}>
-                    <ManagerAppbar drawerOption={this.drawers} location="Home" />
-                </Provider>
-                <Panel value={1} index={1}>
-                    {
+            // <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
+                
+                // <Panel value={1} index={1}>
+                //     {
                         <div style={{ border: "1px solid" }}>
                             {this.state.actionNotesList.map((note) => (
                                 <p>{note.comment}</p>
                             ))}
                         </div>
-                    }
-                </Panel>
-            </div>
+                //     }
+                // </Panel>
+            // </div>
         );
     }
 }
