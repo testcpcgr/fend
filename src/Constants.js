@@ -1,5 +1,9 @@
 //export const ipAddressAuthentication = "http://localhost:3000";
-export const ipAddressAuthentication = "https://zuenhmsportalserver.azurewebsites.net";
+// export const ipAddressAuthentication = "https://zuenhmsportalserver.azurewebsites.net";
+
+//Riaz 
+export const ipAddressAuthentication = "https://cpcgrserver.azurewebsites.net"
+
 export const backgroundColor =
   "linear-gradient(to right top, #c8fdf7 ,#cdc8fd)";
 export const buttonColor = "#303F9F";
