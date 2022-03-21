@@ -2,7 +2,7 @@
 // export const ipAddressAuthentication = "https://zuenhmsportalserver.azurewebsites.net";
 
 //Riaz 
-export const ipAddressAuthentication = "https://cpcgrserver.azurewebsites.net"
+export const ipAddressAuthentication = "http://cpcgrserver.azurewebsites.net"
 
 export const backgroundColor =
   "linear-gradient(to right top, #c8fdf7 ,#cdc8fd)";
