@@ -6,6 +6,7 @@ import { backgroundColor, buttonColor, buttonTextColor } from "../Constants";
 import ManagerAppbar from "../components/ManagerAppBar";
 import { createStore, combineReducers } from 'redux';
 import authorised from "../reduxReduncer/authorised";
+import logo from "../Images/logo.png";
 
 function HomePage() {
     const [currentUser, setUser] = useState(authenticationService.currentUserValue);
@@ -16,6 +17,7 @@ function HomePage() {
 
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
+    
     useEffect(() => {
        
         getById(currentUser.id);
@@ -38,7 +40,20 @@ function HomePage() {
                     Click on the left Navigation bar to continue
                 </p>
             </div>
+            <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '70vh'}}>
+                <img
+                src={logo}
+                style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                // paddingLeft: 50,
+                }}
+                alt="CPCGR LOGO"
+            />
+            </div>
         </div>
+        
     );
 
 }

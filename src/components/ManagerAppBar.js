@@ -321,11 +321,11 @@ const ManagerAppBar = (props) => {
                 color: mainAppBarTextColor,
               }}
             >
-              ZUE NHMS PORTAL
+              CPCGR PORTAL
             </Link>
 
             <Typography style={{ fontSize: 12, color: mainAppBarTextColor }}>
-              {location}
+              {/* {location} */}
             </Typography>
           </div>
           <Button color="inherit" startIcon={<PersonIcon />}>
