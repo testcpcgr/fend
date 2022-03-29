@@ -53,24 +53,7 @@ const useStyles = makeStyles((theme) => ({
 const ManagerAppBar = (props) => {
   const history = useNavigate();
   const dispatch = useDispatch();
-  const menuItems = [
-    {
-      text: "Home",
-      icon: <HomeIcon color="primary" />,
-      path: "/",
-
-    },
-    {
-      text: "Storage Module",
-      icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-      path: "/SM/ModuleSelection",
-    }
-    //   {
-    //     text: "Driver Monitoring",
-    //     icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-    //     path: "/DM/DMDashboardPage",
-    //   }
-  ];
+  
   useEffect(() => {
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
@@ -106,7 +89,7 @@ const ManagerAppBar = (props) => {
   };
   return (
     <div className={classes.root}>
-      <Drawer open={drawer} onClose={drawer} onClose={toggleDrawer(false)}>
+      <Drawer open={drawer} onClose={toggleDrawer(false)}>
         <div
           className={classes.list}
           style={{

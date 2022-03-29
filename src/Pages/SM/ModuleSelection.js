@@ -15,12 +15,14 @@ class ModuleSelection extends React.Component {
         this.state = {
             modulesList: [{ Id: 0, ModuleName: " --- Select a State ---" }],
             selectedModuleName: "",
+            selectedModuleId: 0,
             hasModuleSelected: false,
             fileTypeList: [{}],
             selectedFileType: [],
             token: authenticationService.currentUserValue.token,
             email: 'jack@gamil.com',
-            drawers: ""
+            drawers: "",
+            boxchecked: []
         };
     }
 
@@ -44,7 +46,8 @@ class ModuleSelection extends React.Component {
 
     submitSelection = (event) => {
         this.setState({
-            selectedModuleName: event.name
+            selectedModuleName: event.name,
+            selectedModuleId: event.value
         });
         const requestOptions = {
             method: 'POST',
@@ -76,9 +79,9 @@ class ModuleSelection extends React.Component {
             });
     }
 
-    handleOnChange = (event) => {
-        const checked = event.target.checked;
-        console.log(checked);
+    handleOnChange = (event) => {        
+        const { checked } = event.target;
+        
         if (checked) {
             const newTypeList = this.state.selectedFileType.concat(event.target.value);
             this.setState({
@@ -91,6 +94,7 @@ class ModuleSelection extends React.Component {
                 selectedFileType: newList
             });
         }
+        this.state.boxchecked[event.target.value] = checked;        
     }
 
     render() {
@@ -111,7 +115,6 @@ class ModuleSelection extends React.Component {
             );
         };
 
-
         return (
             <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
                 <Provider store={store}>
@@ -120,7 +123,7 @@ class ModuleSelection extends React.Component {
                 <Panel value={1} index={1}>
                     <div className="col-md-12">
                         <div className="emdeb-responsive">
-                            <select onChange={e => this.submitSelection(e.target)} value={e=> e.target.value}>
+                            <select name="moduleList" onChange={e => this.submitSelection(e.target)} value={this.state.selectedModuleId}>
                                 {this.state.modulesList.map(module => (
                                     <option key={module.Id} name={module.ModuleName} value={module.Id} >{module.ModuleName}</option>
                                 ))}
@@ -140,10 +143,10 @@ class ModuleSelection extends React.Component {
                                                     id={`custom-checkbox-${index}`}
                                                     name={fileType.FileName}
                                                     value={fileType.Id}
-                                                
-                                                    onChange={e => this.handleOnChange(e)}
+                                                    onChange={this.handleOnChange}
+                                                    checked={ this.state.boxchecked[fileType.Id]}
                                                 />
-                                               <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
+                                                <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
                                             </div>
                                         );
                                     })}

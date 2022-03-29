@@ -143,14 +143,16 @@ const FileUpload = (props) => {
         if (errorMessage != " " || errorMessage != "") {
             const formData = new FormData(e.target);
       
-            formData.append('auth', authenticationService.currentUserValue.token);
-            formData.append('email', 'jack@gmail.com');
+            // formData.append('auth', authenticationService.currentUserValue.token);
+            // formData.append('email', 'jack@gmail.com');
             fetch(
                 process.env.REACT_APP_SERVER_BASE_URL + 'storage/blobupload',
                 {
                     method: 'POST',
+                    mode: 'cors',              
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin" : "*", 
+                        "Access-Control-Allow-Credentials" : true ,
                         'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
                     },
                     body: formData,
