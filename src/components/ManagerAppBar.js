@@ -23,12 +23,13 @@ import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
 import AlarmIcon from "@mui/icons-material/Alarm";
-import { authenticationService } from '../services/authentication.service';
+import { activeDirectoryService } from '../services/authPopup';
 import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import PermissionProvider from './PermissionProvider';
+import { useMsal } from "@azure/msal-react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
 const ManagerAppBar = (props) => {
   const history = useNavigate();
   const dispatch = useDispatch();
+  const { instance } = useMsal();
   const menuItems = [
     {
       text: "Home",
@@ -65,11 +67,6 @@ const ManagerAppBar = (props) => {
       icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
       path: "/SM/ModuleSelection",
     }
-    //   {
-    //     text: "Driver Monitoring",
-    //     icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-    //     path: "/DM/DMDashboardPage",
-    //   }
   ];
   useEffect(() => {
     setDrawer(props.drawerOption);
@@ -84,7 +81,6 @@ const ManagerAppBar = (props) => {
     ) {
       return;
     }
-
     setDrawer(open);
   };
   const [location, setLocation] = useState("Home");
@@ -93,8 +89,7 @@ const ManagerAppBar = (props) => {
     setLocation(props.location);
   }, props.location);
   const handleLogOut = () => {
-    authenticationService.logout();
-    history('/login');
+    activeDirectoryService.signOut(instance);
   };
   const [dmmenuopen, setDMOpen] = React.useState(false);
   const [reportmenuopen, setReportOpen] = React.useState(false);
@@ -174,7 +169,6 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMCreateActionPage"
                     style={{ textDecoration: "none", color: "black" }}
-
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -186,7 +180,6 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMActionViewPage"
                     style={{ textDecoration: "none", color: "black" }}
-
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -197,11 +190,6 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
-
-
-
-
-
               <ListItemButton onClick={handleReportClick}>
                 <ListItemIcon>
                   <GroupIcon style={{ color: "#3F51B5" }} />
@@ -223,7 +211,6 @@ const ManagerAppBar = (props) => {
                       />
                     </ListItemButton>
                   </Link>
-
                   <Link
                     to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
                     style={{ textDecoration: "none", color: "black" }}
@@ -274,8 +261,6 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
-
-
             </div>
           </List>
           <div onClick={handleLogOut}>
