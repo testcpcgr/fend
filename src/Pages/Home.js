@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
-//import { getAll, getById } from '../services/user.services';
 import { authenticationService } from '../services/authentication.service';
 import { backgroundColor, buttonColor, buttonTextColor } from "../Constants";
 import ManagerAppbar from "../components/ManagerAppBar";
@@ -11,6 +10,9 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { useNavigate } from "react-router-dom";
 import { activeDirectoryService } from '../services/authPopup';
 import { useMsal } from "@azure/msal-react";
+import {
+    Button
+  } from "@material-ui/core";
 
 const HomePage = () => {
     const history = useNavigate();
@@ -20,16 +22,13 @@ const HomePage = () => {
     const rootReducer = combineReducers({
         authorised
     });
-
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
-
     useEffect(() => {
-        console.log(isAuthenticated);
         if (isAuthenticated) {
             history('/');            
         }       
-    }, [])    
+    }, [])
     
     const handleLogin = () => {
         activeDirectoryService.signIn(instance);
@@ -67,10 +66,15 @@ const HomePage = () => {
                     />
                 </div>                
             </>
-                : <button
-                    onClick={handleLogin}>
-                    Sign In
-                </button>
+                : 
+                <Button
+                variant="contained"
+                color="primary"
+                onClick={handleLogin}
+                style={{ alignSelf: "center" }}
+              >
+                Sign In
+              </Button>
             }
         </div>
     );

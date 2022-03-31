@@ -6,12 +6,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createStore, combineReducers } from 'redux';
 import { AppBar, Typography } from "@material-ui/core";
-
+import Cookies from 'universal-cookie';
 import { Provider } from 'react-redux';
+var cookies = null;
 
 class ModuleSelection extends React.Component {
     constructor(props) {
         super(props);
+        cookies = new Cookies();
         this.state = {
             modulesList: [{ Id: 0, ModuleName: " --- Select a State ---" }],
             selectedModuleName: "",
@@ -19,8 +21,10 @@ class ModuleSelection extends React.Component {
             fileTypeList: [{}],
             selectedFileType: [],
             token: authenticationService.currentUserValue.token,
-            email: 'jack@gamil.com',
-            drawers: ""
+            email: authenticationService.currentUserValue.account.username,
+            drawers: "",
+            responseStatusCode: 0,
+            error:""
         };
     }
 
@@ -30,15 +34,23 @@ class ModuleSelection extends React.Component {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.state.token
+                'Authorization': 'Bearer ' + this.state.token,
+                'oid': cookies.get('oid')
             }
         })
             .then((response) => response.json())
-            .then((response) => {
-                const newList = this.state.modulesList.concat(response.modules);
-                this.setState({
-                    modulesList: newList
-                });
+            .then((response) => {                
+                if (response.message !== "Unauthorized") {
+                    const newList = this.state.modulesList.concat(response.modules);
+                    this.setState({
+                        modulesList: newList
+                    });
+                }
+                else{
+                    this.setState({
+                        error:response.message
+                    });
+                }                
             });
     }
 
@@ -50,7 +62,8 @@ class ModuleSelection extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.state.token
+                'Authorization': 'Bearer ' + this.state.token,
+                'oid': cookies.get('oid')
             },
             body: JSON.stringify({ 'ModuleId': event.value, 'auth': this.state.token, 'email': this.state.email }),
         };
@@ -58,9 +71,10 @@ class ModuleSelection extends React.Component {
             process.env.REACT_APP_SERVER_BASE_URL + 'storage/getFileTypesByModule',
             requestOptions
         )
-            .then((response) => response.json())
-            .then((response) => {
-                if (response.success == true) {
+            .then((response) =>  response.json()
+            )
+            .then((response) => {               
+                if (response.message !== "Unauthorized") {
                     this.setState({
                         hasModuleSelected: true
                     });
@@ -68,7 +82,10 @@ class ModuleSelection extends React.Component {
                         fileTypeList: response.filetypes
                     });
                 } else {
-                    alert('some error occurred try again');
+                    alert('some error occurred try again: '+response.message);
+                    this.setState({
+                        error:response.message
+                    });
                 }
             })
             .catch((error) => {
@@ -77,8 +94,7 @@ class ModuleSelection extends React.Component {
     }
 
     handleOnChange = (event) => {
-        const checked = event.target.checked;
-        console.log(checked);
+        const checked = event.target.checked;       
         if (checked) {
             const newTypeList = this.state.selectedFileType.concat(event.target.value);
             this.setState({
@@ -110,8 +126,6 @@ class ModuleSelection extends React.Component {
                 </div>
             );
         };
-
-
         return (
             <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
                 <Provider store={store}>
@@ -120,7 +134,8 @@ class ModuleSelection extends React.Component {
                 <Panel value={1} index={1}>
                     <div className="col-md-12">
                         <div className="emdeb-responsive">
-                            <select onChange={e => this.submitSelection(e.target)} value={e=> e.target.value}>
+                            <h3>{this.state.error}</h3>
+                            <select onChange={e => this.submitSelection(e.target)} value={e => e.target.value}>
                                 {this.state.modulesList.map(module => (
                                     <option key={module.Id} name={module.ModuleName} value={module.Id} >{module.ModuleName}</option>
                                 ))}
@@ -140,10 +155,10 @@ class ModuleSelection extends React.Component {
                                                     id={`custom-checkbox-${index}`}
                                                     name={fileType.FileName}
                                                     value={fileType.Id}
-                                                
+
                                                     onChange={e => this.handleOnChange(e)}
                                                 />
-                                               <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
+                                                <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
                                             </div>
                                         );
                                     })}

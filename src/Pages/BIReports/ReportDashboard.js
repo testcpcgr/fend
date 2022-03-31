@@ -7,14 +7,16 @@ import React, { useState, useEffect } from "react";
 import { createStore, combineReducers } from 'redux';
 import { AppBar, Typography } from "@material-ui/core";
 import { Provider } from 'react-redux';
-
+import Cookies from 'universal-cookie';
 import { useLocation } from "react-router-dom";
 
 function DMDashboardPage() {
     let location = useLocation();
+    const cookies = new Cookies();
     const [drawers, setDrawer] = useState("");
     var [reportType, setReportType] = useState("");
     const [reportTypeIframeLink, setreportTypeIframeLink] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
     const rootReducer = combineReducers({
         authorised
     });
@@ -38,16 +40,23 @@ function DMDashboardPage() {
             body: JSON.stringify({ ModuleId: 2 }),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'oid': cookies.get('oid')
             }
         })
             .then((response) => response.json())
             .then((response) => {
-                const selectedType = response.data.filter(row =>
-                    removeExtraSpace(row.FileName) == removeExtraSpace(location.state.ReportType)
-                );
-                if (selectedType.length > 0) {
-                    setreportTypeIframeLink(selectedType[0].Iframe);
+                if (response.message !== 'Unauthorized') {
+                    const selectedType = response.data.filter(row =>
+                        removeExtraSpace(row.FileName) == removeExtraSpace(location.state.ReportType)
+                    );
+                    if (selectedType.length > 0) {
+                        setreportTypeIframeLink(selectedType[0].Iframe);
+                    }
+                }
+                else {
+                    setErrorMessage(response.message);
+                    alert('some error occurred try again');
                 }
             });
     }, [location.state.ReportType]);
@@ -58,6 +67,7 @@ function DMDashboardPage() {
             </Provider>
             <Panel value={1} index={1}>
                 <div className="col-md-12">
+                    <h3>{errorMessage}</h3>
                     <div key="1" className="emdeb-responsive">
                         <IFrame src={reportTypeIframeLink} height="800" width="1200" frameborder="0" title="WIP" allowfullscreen="true"></IFrame>
                     </div>

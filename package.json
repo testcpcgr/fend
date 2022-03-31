@@ -24,6 +24,7 @@
     "react-scripts": "5.0.0",
     "react-string-format": "^1.0.0",
     "rxjs": "^6.4.0",
+    "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.4",
     "yargs": "^17.4.0"

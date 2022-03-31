@@ -1,7 +1,7 @@
 import { msalConfig, loginRequest, tokenRequest } from './authConfig';
 import { callMSGraph } from './graph';
 import { graphConfig } from './graphConfig';
-//import { showWelcomeMessage, updateUI, profileButton, mailButton } from './ui';
+import Cookies from 'universal-cookie';
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 // Create the main myMSALObj instance
@@ -22,31 +22,37 @@ function loadPage(token) {
         // Add choose account code here
         console.warn("Multiple accounts detected.");
     } else if (currentAccounts.length === 1) {
-        username = currentAccounts[0].username;       
-        localStorage.setItem('currentUser', JSON.stringify({account: currentAccounts[0], token: token}));
+        username = currentAccounts[0].username;
+        if (localStorage.getItem("currentUser") === null) {
+            localStorage.setItem('currentUser', JSON.stringify({ account: currentAccounts[0], token: token }));
+        }
+        const cookies = new Cookies();
+        cookies.set('oid', currentAccounts[0].idTokenClaims.oid, { path: '/' });
     }
 }
 
-function handleResponse(resp) {    
+function handleResponse(resp) {
     if (resp !== null) {
         username = resp.account.username;
-        localStorage.setItem('currentUser', JSON.stringify({account: resp.account, token: resp.accessToken}));
+        localStorage.setItem('currentUser', JSON.stringify({ account: resp.account, token: resp.accessToken }));
+        const cookies = new Cookies();
+        cookies.set('oid', resp.account.idTokenClaims.oid, { path: '/' });
         //localStorage.setItem('useraccesstoken', JSON.stringify(resp.accessToken));
-    } else {
+    } else {       
         loadPage(resp.accessToken);
-    }    
+    }
 }
 
 function signIn(instance) {
     instance.loginPopup(loginRequest).then(handleResponse).catch(error => {
-        console.error(error);
+        console.log(error);
     });
 }
 
 function signOut(instance) {
     instance.logoutPopup().catch(e => {
-        console.error(e);
-    });    
+        console.log(e);
+    });
     localStorage.removeItem('currentUser');
     localStorage.removeItem('useraccesstoken');
 }
