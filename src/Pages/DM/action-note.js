@@ -6,11 +6,13 @@ import { AppBar, Typography } from "@material-ui/core";
 import authorised from "../../reduxReduncer/authorised";
 import { Provider } from 'react-redux';
 import { authenticationService } from '../../services/authentication.service';
+import Cookies from 'universal-cookie';
 
 const ActionNote = (props) => {
     const [action_id, setActionId] = useState();
     const [note, setNote] = useState();
     const [drawers, setDrawer] = useState("");
+    const cookies = new Cookies();
     const handleChange = (event) => {
         setActionId(props.actionid);
         setNote(event.target.value);
@@ -21,9 +23,10 @@ const ActionNote = (props) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ 'action_id': action_id, 'note': note, email: 'jack@gmail.com', token:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJpYXQiOjE2NDc0MTk5NDgsImV4cCI6MTY0NzQyNzE0OH0.qxz8U-56frZoGqnovEaiHz-ghxv4qPm3qzTWewTxelc'})
+            body: JSON.stringify({ 'action_id': action_id, 'note': note, email: authenticationService.currentUserValue.account.username, token:authenticationService.currentUserValue.token})
         };
         fetch(process.env.REACT_APP_SERVER_BASE_URL + 'drivermonitoring/CreateActionNotes', requestOptions)
             .then(function (response) {
@@ -48,8 +51,6 @@ const ActionNote = (props) => {
     };
 
     return (
-       
-      
             <Panel value={1} index={1}>
                 <form onSubmit={handleSubmit}>
                     <input type="hidden" name="action_id" value='0'></input>

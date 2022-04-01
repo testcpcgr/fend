@@ -6,31 +6,37 @@ import { AppBar, Typography } from "@material-ui/core";
 import authorised from "../../reduxReduncer/authorised";
 import { Provider } from 'react-redux';
 import { authenticationService } from '../../services/authentication.service';
+import Cookies from 'universal-cookie';
+var cookies = null;
 
 class MyForm extends React.Component {
     constructor(props) {
         super(props);
+        cookies = new Cookies();
         this.state = {
             disposition_type_id: 0,
             response_type_id: null,
             note: "",
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2LCJpYXQiOjE2NDc0MTk5NDgsImV4cCI6MTY0NzQyNzE0OH0.qxz8U-56frZoGqnovEaiHz-ghxv4qPm3qzTWewTxelc',
-            email: 'jack@gmail.com',
+            token: authenticationService.currentUserValue.token,
+            email: authenticationService.currentUserValue.account.username,
             assignee: 0,
             stakeholdersList: [
                 { Id: 0, name: " --- Select a State ---", User_Type: "" },
             ],
             dispositionList: [{ Id: 0, Description: " --- Select a State ---" }],
-            drawers: ""
+            drawers: "",
+            error: ""
         };
     }
 
     componentDidMount() {
+
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetStakeholders", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                'Authorization': 'Bearer ' + this.state.token,
+                'oid': cookies.get('oid')
             },
             body: JSON.stringify({
                 email: this.state.email,
@@ -39,25 +45,41 @@ class MyForm extends React.Component {
         })
             .then((response) => response.json())
             .then((response) => {
-                const newList = this.state.stakeholdersList.concat(response.result);
-                this.setState({
-                    stakeholdersList: newList,
-                });
+                if (response.message !== "stakeholder record not found") {
+                    const newList = this.state.stakeholdersList.concat(response.result);
+                    this.setState({
+                        stakeholdersList: newList,
+                    });
+                }
+                else{
+                    this.setState({
+                        error:response.message
+                    });
+                } 
             });
 
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetDisposition", {
             method: "Get",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                'Authorization': 'Bearer ' + this.state.token,
+                'oid': cookies.get('oid')
             }
         })
             .then((response) => response.json())
             .then((response) => {
-                const newList = this.state.dispositionList.concat(response.result);
-                this.setState({
-                    dispositionList: newList,
-                });
+                if (response.message !== "Unauthorized") {
+                    const newList = this.state.dispositionList.concat(response.result);
+                    this.setState({
+                        dispositionList: newList,
+                    });
+                }
+                else{
+                    
+                    this.setState({
+                        error:response.message
+                    });
+                } 
             });
     }
 
@@ -65,22 +87,23 @@ class MyForm extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleSubmit = (event) => {
-        //alert('A form was submitted: ' + this.state);
-        console.log(JSON.stringify(this.state));
+    handleSubmit = (event) => {       
         const requestOptions = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                'Authorization': 'Bearer ' + this.state.token,
+                'oid': cookies.get('oid')
             },
             body: JSON.stringify(this.state),
         };
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/CreateAction",
             requestOptions
-        ).then(function (response) {
-            return response.json();
+        )
+        .then((response) => response.json())
+        .then(function (response) {
+            return response;
         });
 
         event.preventDefault();
@@ -108,6 +131,7 @@ class MyForm extends React.Component {
                     display: "flex",
                     justifyContent: "center",
                 }}>
+                      
                     <form
                         onSubmit={this.handleSubmit}
                         style={{
@@ -120,6 +144,7 @@ class MyForm extends React.Component {
                             padding: "10px",
                         }}
                     >
+                        <h3 >{this.state.error}</h3>
                         <label>Select Stakeholder type:</label>
                         <select name="assignee" onChange={(e) => this.handleChange(e)} value={(e) => e.target.value}>
                             {this.state.stakeholdersList.map((stakeholder) => (
