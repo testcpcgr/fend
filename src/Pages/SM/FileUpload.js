@@ -148,7 +148,7 @@ const FileUpload = (props) => {
             const formData = new FormData(e.target);
 
             formData.append('auth', authenticationService.currentUserValue.token);
-            formData.append('email', authenticationService.currentUserValue.account.username);
+            formData.append('objectId', authenticationService.currentUserValue.account.localAccountId);
             fetch(
                 process.env.REACT_APP_SERVER_BASE_URL + 'storage/blobupload',
                 {

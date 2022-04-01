@@ -22,7 +22,7 @@ class ViewActions extends React.Component {
             showCommentForm: false,
             showChat: false,
             token: authenticationService.currentUserValue.token,
-            email: authenticationService.currentUserValue.account.username,
+            objectId: authenticationService.currentUserValue.account.localAccountId,
             note: '',
             role: authenticationService.currentUserValue.role,
             responseTypeList: [{ Id: 0, Description: '---Select from list---' }],
@@ -38,7 +38,7 @@ class ViewActions extends React.Component {
             isuserassignee = false;
         }
         else {
-            isuserassignee = true;
+            isuserassignee = false;
         }
 
         fetch(
@@ -49,7 +49,7 @@ class ViewActions extends React.Component {
                 'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
                 'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ email: this.state.email, token: this.state.token, isassignee: isuserassignee })
+            body: JSON.stringify({ objectId: this.state.objectId, isassignee: isuserassignee })
         })
             .then((response) =>
                 response.json()
@@ -168,7 +168,7 @@ class ViewActions extends React.Component {
                 'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
                 'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ 'action_id': this.state.action_id, 'note': this.state.note, email: this.state.email, token: this.state.token })
+            body: JSON.stringify({ 'action_id': this.state.action_id, 'note': this.state.note, objectId: this.state.objectId })
         };
         fetch(process.env.REACT_APP_SERVER_BASE_URL + 'drivermonitoring/CreateActionNotes', requestOptions)
             .then((response) => response.json())

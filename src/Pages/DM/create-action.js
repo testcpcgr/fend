@@ -18,7 +18,7 @@ class MyForm extends React.Component {
             response_type_id: null,
             note: "",
             token: authenticationService.currentUserValue.token,
-            email: authenticationService.currentUserValue.account.username,
+            objectId: authenticationService.currentUserValue.account.localAccountId,
             assignee: 0,
             stakeholdersList: [
                 { Id: 0, name: " --- Select a State ---", User_Type: "" },
@@ -39,8 +39,7 @@ class MyForm extends React.Component {
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({
-                email: this.state.email,
-                token: this.state.token,
+                objectId: this.state.objectId
             })
         })
             .then((response) => response.json())
