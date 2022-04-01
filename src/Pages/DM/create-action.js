@@ -87,8 +87,7 @@ class MyForm extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleSubmit = (event) => {
-        console.log(JSON.stringify(this.state));
+    handleSubmit = (event) => {       
         const requestOptions = {
             method: "POST",
             headers: {
