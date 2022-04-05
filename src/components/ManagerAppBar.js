@@ -98,9 +98,10 @@ const ManagerAppBar = (props) => {
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
       .then(result => {
-        console.log(result);
+        if(result.success !== false)
+        {      
         setPermissionDetails(result.result);
-
+        }
       });
   }, []);
 
