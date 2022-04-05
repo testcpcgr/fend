@@ -98,9 +98,9 @@ const ManagerAppBar = (props) => {
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
       .then(result => {
-        if(result.success !== false)
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
         {      
-        setPermissionDetails(result.result);
+          setPermissionDetails(result.result);
         }
       });
   }, []);
