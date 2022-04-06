@@ -10,6 +10,8 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { useNavigate } from "react-router-dom";
 import { activeDirectoryService } from '../services/authPopup';
 import { useMsal } from "@azure/msal-react";
+import Cookies from 'universal-cookie';
+
 import {
     Button
   } from "@material-ui/core";
@@ -19,12 +21,30 @@ const HomePage = () => {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const [currentUser, setUser] = useState(authenticationService.currentUserValue);
+    var cookies =  new Cookies();
     const rootReducer = combineReducers({
         authorised
     });
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
     useEffect(() => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+              'oid': cookies.get('oid')
+            },
+            body: JSON.stringify({ 'objectId': authenticationService.currentUserValue.account.localAccountId }),
+          };
+          fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+            .then((response) => response.json())
+            .then(result => {
+              if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+              {      
+                localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
+              }
+            });
         if (isAuthenticated) {
             history('/');            
         }       

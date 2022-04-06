@@ -93,7 +93,7 @@ const ManagerAppBar = (props) => {
         'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
         'oid': cookies.get('oid')
       },
-      body: JSON.stringify({ 'objectId': authenticationService.currentUserValue.account.localAccountId }),
+      body: JSON.stringify({ 'objectId': authenticationService.currentUserValue.account.localAccountId, 'clientId': localStorage.getItem('ClientId') }),
     };
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
@@ -101,6 +101,7 @@ const ManagerAppBar = (props) => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
         {      
           setPermissionDetails(result.result);
+          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId, role: result.result[0].Role }));
         }
       });
   }, []);

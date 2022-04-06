@@ -54,7 +54,8 @@ function signOut(instance) {
         console.log(e);
     });
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('useraccesstoken');
+    localStorage.removeItem('UserRole');
+    localStorage.removeItem('ClientId');
 }
 
 function getTokenPopup(request) {

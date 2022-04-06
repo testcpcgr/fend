@@ -12,6 +12,7 @@ import Cookies from 'universal-cookie';
 var cookies = null;
 
 class ViewActions extends React.Component {
+    
     constructor(props) {
         super(props);
         cookies = new Cookies();
@@ -24,7 +25,7 @@ class ViewActions extends React.Component {
             token: authenticationService.currentUserValue.token,
             objectId: authenticationService.currentUserValue.account.localAccountId,
             note: '',
-            role: authenticationService.currentUserValue.role,
+            role: JSON.parse(localStorage.getItem('UserRole')).permissionLevelId,
             responseTypeList: [{ Id: 0, Description: '---Select from list---' }],
             StatusList: [{ Id: 0, Status: '---Select from list---' }],
             drawers: "",          
@@ -34,13 +35,14 @@ class ViewActions extends React.Component {
 
     componentDidMount() {
         var isuserassignee = false;
-        if (this.state.role === 'Admin') {
+        console.log(this.state.role)
+        if (this.state.role === 2 || this.state.role === 3) {
             isuserassignee = false;
         }
         else {
-            isuserassignee = false;
+            isuserassignee = true;
         }
-
+console.log(isuserassignee);
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetActionByEmail", {
             method: 'POST',
@@ -152,7 +154,6 @@ class ViewActions extends React.Component {
     }
 
     openChat = (actionId) => {
-        console.log(actionId);
         this.setState({ showChat: true, action_id: actionId });
     }
 
