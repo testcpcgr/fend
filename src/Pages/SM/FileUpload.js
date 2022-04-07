@@ -10,13 +10,15 @@ import { Provider } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import { format } from 'react-string-format';
 import * as XLSX from 'xlsx'
+import Cookies from 'universal-cookie';
 
 const FileUpload = (props) => {
     let location = useLocation();
     const [nameOfColumns, setRequiredNameOfColumns] = useState([]);
     const [filenames, setFileNames] = useState([]);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");    
     const [drawers, setDrawer] = useState("");
+    const cookies = new Cookies();
     const rootReducer = combineReducers({
         authorised
     });
@@ -24,11 +26,11 @@ const FileUpload = (props) => {
     const store = createStore(rootReducer);
     const Panel = (props) => {
         return (
-          <div hidden={props.value !== props.index}>
-            <Typography>{props.children}</Typography>
-          </div>
+            <div hidden={props.value !== props.index}>
+                <Typography>{props.children}</Typography>
+            </div>
         );
-      };
+    };
     const processData = (dataString, filetypeid, requiredColNumber, cb) => {
         const dataStringLines = dataString.split(/\r\n|\n/);
         const headers = dataStringLines[0].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -90,7 +92,8 @@ const FileUpload = (props) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' +  authenticationService.currentUserValue.token
+                    'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                    'oid': cookies.get('oid')
                 },
                 body: JSON.stringify({ 'FileTypeIds': items.toString() })
             };
@@ -100,7 +103,7 @@ const FileUpload = (props) => {
             )
                 .then((response) => response.json())
                 .then((response) => {
-                    if (response.success == true) {
+                    if (response.message !== 'Unauthorized') {
                         const newlist = [];
                         const map = new Map();
                         for (const item of response.filedetails) {
@@ -129,6 +132,7 @@ const FileUpload = (props) => {
                         setRequiredNameOfColumns(newlist2);
 
                     } else {
+                        setErrorMessage(response.message);
                         alert('some error occurred try again');
                     }
                 })
@@ -142,9 +146,9 @@ const FileUpload = (props) => {
         e.preventDefault();
         if (errorMessage != " " || errorMessage != "") {
             const formData = new FormData(e.target);
-      
-            // formData.append('auth', authenticationService.currentUserValue.token);
-            // formData.append('email', 'jack@gmail.com');
+
+            formData.append('auth', authenticationService.currentUserValue.token);
+            formData.append('email', authenticationService.currentUserValue.account.username);
             fetch(
                 process.env.REACT_APP_SERVER_BASE_URL + 'storage/blobupload',
                 {
@@ -153,15 +157,15 @@ const FileUpload = (props) => {
                     headers: {
                         "Access-Control-Allow-Origin" : "*", 
                         "Access-Control-Allow-Credentials" : true ,
-                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token
+                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token                        
+                        'oid': cookies.get('oid')
                     },
                     body: formData,
                 }
             )
                 // .then((response) => { response.json(); })
                 .then((response) => {
-                    response.json();
-                    console.log('Success:', response);
+                    response.json();                   
                     if (response.status == 200) {
                         alert('File upload Status is :' + response.statusText);
                         window.location.href = "/?msg=" + response.statusText;

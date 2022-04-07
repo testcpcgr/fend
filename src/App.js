@@ -1,6 +1,5 @@
 
 import './App.css';
-import LoginPage from "./Pages/Login";
 import HomePage from "./Pages/Home";
 import DMDashboardPage from "./Pages/DM/dashboard";
 import DMActionViewPage from "./Pages/DM/view-actions";
@@ -26,19 +25,13 @@ function App() {
   const [isAdmin, setIsAdminFlag] = useState();
   useEffect(() => {
 
-    authenticationService.currentUser.subscribe(x => {
-      if (x !== null && typeof x.message === "undefined") {
-        setCurrentUser(x);
-        setIsAdminFlag(x && x.role === Role.Admin);
-      }
-    });
+    // authenticationService.currentUser.subscribe(x => {
+    //   if (x !== null && typeof x.message === "undefined") {
+    //     setCurrentUser(x);
+    //     setIsAdminFlag(x && x.role === Role.Admin);
+    //   }
+    // });
   });
-
-  const logout = () => {
-    authenticationService.logout();
-    history.push('/login');
-    setCurrentUser(null);
-  }
 
   return (
     <Router>
@@ -71,14 +64,14 @@ function App() {
           <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
             <Route path='/Reports/ReportDashboard' element={<BIReports />} />
           </Route>
-
-          <Route path='/Login' element={<LoginPage />} />
-          <Route exact path='/' element={<PrivateRoute />}>
-            <Route exact path='/' element={<HomePage />} />
-          </Route>
+          <Route path='/' element={<HomePage />} />
+          {/* <Route exact path='/Login' element={<PrivateRoute />}>
+            <Route exact path='/Login' element={<LoginPage />} />
+          </Route> */}
         </Routes>
       </div>
     </Router>
+    // <HomePage />
   );
 }
 

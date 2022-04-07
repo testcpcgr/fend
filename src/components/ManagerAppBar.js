@@ -23,12 +23,14 @@ import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
 import AlarmIcon from "@mui/icons-material/Alarm";
-import { authenticationService } from '../services/authentication.service';
+import { activeDirectoryService } from '../services/authPopup';
 import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import PermissionProvider from './PermissionProvider';
+import { useMsal } from "@azure/msal-react";
+import { authenticationService } from '../services/authentication.service';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,13 +55,26 @@ const useStyles = makeStyles((theme) => ({
 const ManagerAppBar = (props) => {
   const history = useNavigate();
   const dispatch = useDispatch();
-  
+  const { instance } = useMsal();
+  const menuItems = [
+    {
+      text: "Home",
+      icon: <HomeIcon color="primary" />,
+      path: "/",
+
+    },
+    {
+      text: "Storage Module",
+      icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
+      path: "/SM/ModuleSelection",
+    }
+  ];
   useEffect(() => {
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
-  const userLoggedIn = useSelector((state) => state.authorised);
+  const userLoggedIn = authenticationService.currentUserValue.account;
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -67,7 +82,6 @@ const ManagerAppBar = (props) => {
     ) {
       return;
     }
-
     setDrawer(open);
   };
   const [location, setLocation] = useState("Home");
@@ -76,8 +90,7 @@ const ManagerAppBar = (props) => {
     setLocation(props.location);
   }, props.location);
   const handleLogOut = () => {
-    authenticationService.logout();
-    history('/login');
+    activeDirectoryService.signOut(instance);
   };
   const [dmmenuopen, setDMOpen] = React.useState(false);
   const [reportmenuopen, setReportOpen] = React.useState(false);
@@ -157,7 +170,6 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMCreateActionPage"
                     style={{ textDecoration: "none", color: "black" }}
-
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -169,7 +181,6 @@ const ManagerAppBar = (props) => {
                   <Link
                     to="/DM/DMActionViewPage"
                     style={{ textDecoration: "none", color: "black" }}
-
                   >
                     <ListItemButton sx={{ pl: 4 }}>
                       <ListItemText
@@ -180,11 +191,6 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
-
-
-
-
-
               <ListItemButton onClick={handleReportClick}>
                 <ListItemIcon>
                   <GroupIcon style={{ color: "#3F51B5" }} />
@@ -195,7 +201,7 @@ const ManagerAppBar = (props) => {
               <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   <Link
-                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    to='/Reports/ReportDashboard'
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Wipsam' }}
                   >
@@ -206,9 +212,8 @@ const ManagerAppBar = (props) => {
                       />
                     </ListItemButton>
                   </Link>
-
                   <Link
-                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    to='/Reports/ReportDashboard'
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Wipsam Management' }}
                   >
@@ -220,7 +225,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    to='/Reports/ReportDashboard'
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Wipsam PCA' }}
                   >
@@ -232,7 +237,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    to='/Reports/ReportDashboard'
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Audit Report' }}
                   >
@@ -244,7 +249,7 @@ const ManagerAppBar = (props) => {
                     </ListItemButton>
                   </Link>
                   <Link
-                    to={PermissionProvider({ roles: 'Admin,Manager' }) == true ? '/Reports/ReportDashboard' : '#'}
+                    to='/Reports/ReportDashboard'
                     style={{ textDecoration: "none", color: "black" }}
                     state={{ ReportType: 'Pricing Tool' }}
                   >
@@ -257,8 +262,6 @@ const ManagerAppBar = (props) => {
                   </Link>
                 </List>
               </Collapse>
-
-
             </div>
           </List>
           <div onClick={handleLogOut}>
@@ -317,7 +320,7 @@ const ManagerAppBar = (props) => {
               className={classes.title}
               style={{ fontSize: 12, color: mainAppBarTextColor }}
             >
-              {userLoggedIn?.employeeName?._}
+              {userLoggedIn.name}
             </Typography>
           </Button>
         </Toolbar>
