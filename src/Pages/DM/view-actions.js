@@ -34,15 +34,13 @@ class ViewActions extends React.Component {
     }
 
     componentDidMount() {
-        var isuserassignee = false;
-        console.log(this.state.role)
+        var isuserassignee = false;       
         if (this.state.role === 2 || this.state.role === 3) {
             isuserassignee = false;
         }
         else {
             isuserassignee = true;
         }
-console.log(isuserassignee);
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetActionByEmail", {
             method: 'POST',
