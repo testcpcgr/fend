@@ -18,9 +18,8 @@ class ViewActionNotes extends React.Component {
             actionNotesList: [],
             actionList: [],
             action_id: props.actionid,
-            showCommentForm: false,
-            token: authenticationService.currentUserValue.token,
-            email: authenticationService.currentUserValue.account.username,
+            showCommentForm: false,           
+            objectId: authenticationService.currentUserValue.account.localAccountId,
             note: "",
             role: 1,
             drawers: "",           
@@ -45,8 +44,7 @@ class ViewActionNotes extends React.Component {
             },
             body: JSON.stringify({
                 action_id: this.state.action_id,
-                email: this.state.email,
-                token: this.state.token,
+                objectId: this.state.objectId,
                 isassignee: isuserassignee,
             }),
         })

@@ -31,6 +31,8 @@ import Collapse from "@mui/material/Collapse";
 import PermissionProvider from './PermissionProvider';
 import { useMsal } from "@azure/msal-react";
 import { authenticationService } from '../services/authentication.service';
+import Cookies from 'universal-cookie';
+import { ModuleName } from '../helpers/enum/Module_Enum';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,26 +57,19 @@ const useStyles = makeStyles((theme) => ({
 const ManagerAppBar = (props) => {
   const history = useNavigate();
   const dispatch = useDispatch();
+  var [permissionDetails, setPermissionDetails] = useState([]);
+  const cookies = new Cookies();
   const { instance } = useMsal();
-  const menuItems = [
-    {
-      text: "Home",
-      icon: <HomeIcon color="primary" />,
-      path: "/",
-
-    },
-    {
-      text: "Storage Module",
-      icon: <AlarmIcon style={{ color: "#3F51B5" }} />,
-      path: "/SM/ModuleSelection",
-    }
-  ];
-  useEffect(() => {
-    setDrawer(props.drawerOption);
-  }, [props.drawerOption]);
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
-  const userLoggedIn = authenticationService.currentUserValue.account;
+  const [userLoggedIn, setUserLoggedIn] = React.useState({});
+  const [dmmenuopen, setDMOpen] = React.useState(false);
+  const [reportmenuopen, setReportOpen] = React.useState(false);
+  useEffect(() => {
+
+    setDrawer(props.drawerOption);
+  }, [props.drawerOption]);
+
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -87,13 +82,63 @@ const ManagerAppBar = (props) => {
   const [location, setLocation] = useState("Home");
 
   useEffect(() => {
+
     setLocation(props.location);
   }, props.location);
+
+
+  useEffect(() => {  
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+        'oid': cookies.get('oid')
+      },
+      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId }),
+    };
+    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+      .then((response) => response.json())
+      .then(result => {
+          console.log(result);
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+        {      
+          localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
+        }
+      });
+
+
+
+
+
+    console.log('clientid',authenticationService.clientId);   
+    setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
+    requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+        'oid': cookies.get('oid')
+      },
+      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId, 'clientId': authenticationService.clientId }),
+    };
+    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
+      .then((response) => response.json())
+      .then(result => {
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+        {      
+          setPermissionDetails(result.result);
+          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId, role: result.result[0].Role }));
+        }
+      });
+  }, []);
+
+
   const handleLogOut = () => {
     activeDirectoryService.signOut(instance);
   };
-  const [dmmenuopen, setDMOpen] = React.useState(false);
-  const [reportmenuopen, setReportOpen] = React.useState(false);
+
   const handleDMClick = () => {
     setDMOpen(!dmmenuopen);
   };
@@ -101,6 +146,7 @@ const ManagerAppBar = (props) => {
     setReportOpen(!reportmenuopen);
   };
   return (
+
     <div className={classes.root}>
       <Drawer open={drawer} onClose={toggleDrawer(false)}>
         <div
@@ -129,22 +175,26 @@ const ManagerAppBar = (props) => {
                 />
               </ListItemButton>
             </Link>
-            <Link
-              to="/SM/ModuleSelection"
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <ListAltIcon color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Storage Module"
+            {
+              PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.SMUpload, permissionLevel: "Write" }) ?
+                <Link
+                  to="/SM/ModuleSelection"
                   style={{ textDecoration: "none", color: "black" }}
-                  classes={{ primary: classes.listItemText }}
-                />
-              </ListItemButton>
-              
-            </Link>
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <ListAltIcon color="primary" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Storage Module"
+                      style={{ textDecoration: "none", color: "black" }}
+                      classes={{ primary: classes.listItemText }}
+                    />
+                  </ListItemButton>
+
+                </Link>
+                : <></>
+            }
             <div>
               <ListItemButton onClick={handleDMClick}>
                 <ListItemIcon>
@@ -155,40 +205,55 @@ const ManagerAppBar = (props) => {
               </ListItemButton>
               <Collapse in={dmmenuopen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <Link
-                    to="/DM/DMDashboardPage"
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Driver Monitoring' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Dashboard"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to="/DM/DMCreateActionPage"
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Create Action"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to="/DM/DMActionViewPage"
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="View Action"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.DMDashboard, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to="/DM/DMDashboardPage"
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Driver Monitoring' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Dashboard"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.DMAction, permissionLevel: "Write" }) ?
+
+                      <Link
+                        to="/DM/DMCreateActionPage"
+                        style={{ textDecoration: "none", color: "black" }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Create Action"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName:ModuleName.DMAction, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to="/DM/DMActionViewPage"
+                        style={{ textDecoration: "none", color: "black" }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="View Action"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
                 </List>
               </Collapse>
               <ListItemButton onClick={handleReportClick}>
@@ -200,66 +265,91 @@ const ManagerAppBar = (props) => {
               </ListItemButton>
               <Collapse in={reportmenuopen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <Link
-                    to='/Reports/ReportDashboard'
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Wipsam' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Wipsam"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to='/Reports/ReportDashboard'
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Wipsam Management' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Wipsam Management"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to='/Reports/ReportDashboard'
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Wipsam PCA' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Wipsam PCA"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to='/Reports/ReportDashboard'
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Audit Report' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Audit Report"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to='/Reports/ReportDashboard'
-                    style={{ textDecoration: "none", color: "black" }}
-                    state={{ ReportType: 'Pricing Tool' }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary="Price Report"
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItemButton>
-                  </Link>
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsam, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to='/Reports/ReportDashboard'
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Wipsam' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Wipsam"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamManagement, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to='/Reports/ReportDashboard'
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Wipsam Management' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Wipsam Management"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamPCA, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to='/Reports/ReportDashboard'
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Wipsam PCA' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Wipsam PCA"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName:ModuleName.ReportAudit, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to='/Reports/ReportDashboard'
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Audit Report' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Audit Report"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportPriceReport, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to='/Reports/ReportDashboard'
+                        style={{ textDecoration: "none", color: "black" }}
+                        state={{ ReportType: 'Pricing Tool' }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="Price Report"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
                 </List>
               </Collapse>
             </div>

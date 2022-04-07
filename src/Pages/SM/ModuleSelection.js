@@ -22,7 +22,7 @@ class ModuleSelection extends React.Component {
             fileTypeList: [{}],
             selectedFileType: [],
             token: authenticationService.currentUserValue.token,
-            email: authenticationService.currentUserValue.account.username,
+            objectId: authenticationService.currentUserValue.account.localAccountId,
             drawers: "",
             responseStatusCode: 0,
             error:"",
@@ -68,7 +68,7 @@ class ModuleSelection extends React.Component {
                 'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ 'ModuleId': event.value, 'auth': this.state.token, 'email': this.state.email }),
+            body: JSON.stringify({ 'ModuleId': event.value, 'objectId': this.state.objectId }),
         };
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + 'storage/getFileTypesByModule',
