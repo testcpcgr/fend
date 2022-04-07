@@ -157,7 +157,7 @@ const FileUpload = (props) => {
                     headers: {
                         "Access-Control-Allow-Origin" : "*", 
                         "Access-Control-Allow-Credentials" : true ,
-                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token                        
+                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
                         'oid': cookies.get('oid')
                     },
                     body: formData,
