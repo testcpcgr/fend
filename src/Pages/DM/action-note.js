@@ -12,6 +12,8 @@ const ActionNote = (props) => {
     const [action_id, setActionId] = useState();
     const [note, setNote] = useState();
     const [drawers, setDrawer] = useState("");
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
     const cookies = new Cookies();
     const handleChange = (event) => {
         setActionId(props.actionid);
@@ -23,10 +25,10 @@ const ActionNote = (props) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + token,
                 'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ 'action_id': action_id, 'note': note, objectId: authenticationService.currentUserValue.account.localAccountId})
+            body: JSON.stringify({ 'action_id': action_id, 'note': note, objectId: objectId})
         };
         fetch(process.env.REACT_APP_SERVER_BASE_URL + 'drivermonitoring/CreateActionNotes', requestOptions)
             .then(function (response) {

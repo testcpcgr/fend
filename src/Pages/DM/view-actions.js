@@ -22,8 +22,8 @@ class ViewActions extends React.Component {
             action_id: 0,
             showCommentForm: false,
             showChat: false,
-            token: authenticationService.currentUserValue.token,
-            objectId: authenticationService.currentUserValue.account.localAccountId,
+            token: JSON.parse(localStorage.getItem('currentUser'))?.token,
+            objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
             note: '',
             role: JSON.parse(localStorage.getItem('UserRole')).permissionLevelId,
             responseTypeList: [{ Id: 0, Description: '---Select from list---' }],
@@ -46,7 +46,7 @@ class ViewActions extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({ objectId: this.state.objectId, isassignee: isuserassignee })
@@ -99,7 +99,7 @@ class ViewActions extends React.Component {
                 process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetResponseType", {
                 method: 'Get',
                 headers: {
-                    'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                    'Authorization': 'Bearer ' + this.state.token,
                     'oid': cookies.get('oid')
                 },
             })
@@ -126,7 +126,7 @@ class ViewActions extends React.Component {
                 method: 'Get',
                 headers:
                 {
-                    'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                    'Authorization': 'Bearer ' + this.state.token,
                     'oid': cookies.get('oid')
                 },
             })
@@ -164,7 +164,7 @@ class ViewActions extends React.Component {
             method: 'POST',
             headers:
             {
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({ 'action_id': this.state.action_id, 'note': this.state.note, objectId: this.state.objectId })
@@ -182,7 +182,7 @@ class ViewActions extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({ 'action_id': event.target.getAttribute("actionid"), 'response_type_id': event.target.value })
@@ -200,7 +200,7 @@ class ViewActions extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({ 'action_id': event.target.getAttribute("actionid"), 'status_id': event.target.value })
@@ -255,7 +255,7 @@ class ViewActions extends React.Component {
                                     <td >{action.disposition_type}</td>
                                     <td >{action.notes}</td>
                                     {
-                                        this.state.role != 1 ?
+                                        (this.state.role != 2 || this.state.role != 3) ?
                                             <td >
                                                 <select name='response_type_id' actionid={action.id} value={action.ResponseType} onChange={e => this.submitResponseType(e)}>
                                                     {this.state.responseTypeList.map(response => (

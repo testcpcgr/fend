@@ -17,8 +17,8 @@ class MyForm extends React.Component {
             disposition_type_id: 0,
             response_type_id: null,
             note: "",
-            token: authenticationService.currentUserValue.token,
-            objectId: authenticationService.currentUserValue.account.localAccountId,
+            token: JSON.parse(localStorage.getItem('currentUser'))?.token,
+            objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
             assignee: 0,
             stakeholdersList: [
                 { Id: 0, name: " --- Select a State ---", User_Type: "" },

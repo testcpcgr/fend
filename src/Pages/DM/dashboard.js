@@ -16,6 +16,8 @@ function DMDashboardPage() {
     var [reportType, setReportType] = useState("");
     const [reportTypeIframeLink, setreportTypeIframeLink] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
     const rootReducer = combineReducers({
         authorised
     });
@@ -32,7 +34,7 @@ function DMDashboardPage() {
             body: JSON.stringify({ ModuleId: 1 }),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + token,
                 'oid': cookies.get('oid')
             }
         })

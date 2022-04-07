@@ -18,10 +18,11 @@ class ViewActionNotes extends React.Component {
             actionNotesList: [],
             actionList: [],
             action_id: props.actionid,
-            showCommentForm: false,           
-            objectId: authenticationService.currentUserValue.account.localAccountId,
+            showCommentForm: false,
+            token: JSON.parse(localStorage.getItem('currentUser')).token,
+            objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
             note: "",
-            role: 1,
+            role: JSON.parse(localStorage.getItem('UserRole')).permissionLevelId,
             drawers: "",           
             error: ""
         };
@@ -29,9 +30,11 @@ class ViewActionNotes extends React.Component {
 
     componentDidMount() {
         var isuserassignee = false;
-        if (this.state.role === "1") {
+
+        if (this.state.role === 2 || this.state.role === 3) {
             isuserassignee = false;
-        } else {
+        }
+        else {
             isuserassignee = true;
         }
 
@@ -39,7 +42,7 @@ class ViewActionNotes extends React.Component {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({
