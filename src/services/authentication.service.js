@@ -2,12 +2,13 @@ import { BehaviorSubject } from 'rxjs';
 import { handleResponse } from '../helpers/handle-response';
 
 const currentUserSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('currentUser')));
-
+const clientId = new BehaviorSubject(JSON.parse(localStorage.getItem('ClientId')));
 export const authenticationService = {
     login,
     logout,
     currentUser: currentUserSubject.asObservable(),
-    get currentUserValue () {return currentUserSubject.value; }
+    get currentUserValue () {return currentUserSubject.value; },
+    get clientId() {return clientId.value;}
 };
 
 function login(username, password) {

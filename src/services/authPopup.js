@@ -23,7 +23,7 @@ function loadPage(token) {
         console.warn("Multiple accounts detected.");
     } else if (currentAccounts.length === 1) {
         username = currentAccounts[0].username;
-        if (localStorage.getItem("currentUser") === null) {
+        if (localStorage.getItem("currentUser") === null) {         
             localStorage.setItem('currentUser', JSON.stringify({ account: currentAccounts[0], token: token }));
         }
         const cookies = new Cookies();
@@ -33,14 +33,13 @@ function loadPage(token) {
 
 function handleResponse(resp) {
     if (resp !== null) {
-        username = resp.account.username;
+        username = resp.account.username;       
         localStorage.setItem('currentUser', JSON.stringify({ account: resp.account, token: resp.accessToken }));
         const cookies = new Cookies();
         cookies.set('oid', resp.account.idTokenClaims.oid, { path: '/' });
-        //localStorage.setItem('useraccesstoken', JSON.stringify(resp.accessToken));
     } else {       
         loadPage(resp.accessToken);
-    }
+    }    
 }
 
 function signIn(instance) {
@@ -50,12 +49,14 @@ function signIn(instance) {
 }
 
 function signOut(instance) {
+    var cookies =  new Cookies();
     instance.logoutPopup().catch(e => {
         console.log(e);
     });
     localStorage.removeItem('currentUser');
     localStorage.removeItem('UserRole');
     localStorage.removeItem('ClientId');
+    cookies.remove('oid', { path: '/' });
 }
 
 function getTokenPopup(request) {
@@ -98,6 +99,29 @@ function readMail() {
     //     console.error(error);
     // });
 }
+
+// function setClientId(resp){
+//     console.log('set client id',resp.accessToken, resp.account.idTokenClaims.oid);
+//     const requestOptions = {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer ' + resp.accessToken,
+//           'oid': resp.account.idTokenClaims.oid
+//         },
+//         body: JSON.stringify({ 'objectId': resp.account.idTokenClaims.oid }),
+//       };
+//       fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+//         .then((response) => response.json())
+//         .then(result => {
+//             console.log(result);
+//           if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+//           {      
+//             localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
+//           }
+//         });
+
+// }
 
 loadPage();
 

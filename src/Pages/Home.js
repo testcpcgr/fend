@@ -28,24 +28,7 @@ const HomePage = () => {
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
     useEffect(() => {
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
-              'oid': cookies.get('oid')
-            },
-            body: JSON.stringify({ 'objectId': authenticationService.currentUserValue.account.localAccountId }),
-          };
-          fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
-            .then((response) => response.json())
-            .then(result => {
-              if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-              {      
-                localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
-              }
-            });
-        if (isAuthenticated) {
+        if (isAuthenticated) {        
             history('/');            
         }       
     }, [])

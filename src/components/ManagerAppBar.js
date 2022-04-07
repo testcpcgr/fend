@@ -62,10 +62,11 @@ const ManagerAppBar = (props) => {
   const { instance } = useMsal();
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
-  const userLoggedIn = authenticationService.currentUserValue.account;
+  const [userLoggedIn, setUserLoggedIn] = React.useState({});
   const [dmmenuopen, setDMOpen] = React.useState(false);
   const [reportmenuopen, setReportOpen] = React.useState(false);
   useEffect(() => {
+
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
 
@@ -81,19 +82,46 @@ const ManagerAppBar = (props) => {
   const [location, setLocation] = useState("Home");
 
   useEffect(() => {
+
     setLocation(props.location);
   }, props.location);
 
 
-  useEffect(() => {
-    const requestOptions = {
+  useEffect(() => {  
+    
+    var requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
         'oid': cookies.get('oid')
       },
-      body: JSON.stringify({ 'objectId': authenticationService.currentUserValue.account.localAccountId, 'clientId': localStorage.getItem('ClientId') }),
+      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId }),
+    };
+    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+      .then((response) => response.json())
+      .then(result => {
+          console.log(result);
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+        {      
+          localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
+        }
+      });
+
+
+
+
+
+    console.log('clientid',authenticationService.clientId);   
+    setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
+    requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+        'oid': cookies.get('oid')
+      },
+      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId, 'clientId': authenticationService.clientId }),
     };
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
