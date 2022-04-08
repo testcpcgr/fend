@@ -58,7 +58,7 @@ class ViewActions extends React.Component {
                             map.set(item.id, true);    // set any value to Map
                             actions.push({
                                 id: item.id,
-                                createdat: item.createdat,
+                                createdat: new Date(item.createdat),
                                 firstname: item.firstname,
                                 disposition_type: item.disposition_type,
                                 notes: item.notes,
@@ -92,7 +92,7 @@ class ViewActions extends React.Component {
                             map2.set(item.id, true);    // set any value to Map
                             assingedActions.push({
                                 id: item.id,
-                                createdat: item.createdat,
+                                createdat: new Date(item.createdat),
                                 firstname: item.firstname,
                                 disposition_type: item.disposition_type,
                                 notes: item.notes,                                
@@ -279,7 +279,7 @@ class ViewActions extends React.Component {
                         <tbody>
                             {this.state.actionList.map(action => (
                                 <tr key={action.Id}>
-                                    <td >{action.createdat}</td>
+                                    <td >{(action.createdat.getDate()).toString()}/{(action.createdat.getMonth()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
                                     <td >{action.disposition_type}</td>
                                     <td >{action.notes}</td>
                                     {
@@ -328,7 +328,7 @@ class ViewActions extends React.Component {
                         <tbody>
                             {this.state.assignedActionList.map(action => (
                                 <tr key={action.Id}>
-                                    <td >{action.createdat}</td>
+                                    <td >{(action.createdat.getDate()).toString()}/{(action.createdat.getMonth()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
                                     <td >{action.disposition_type}</td>
                                     <td >{action.notes}</td>
                                     {

@@ -30,7 +30,7 @@ class MyForm extends React.Component {
     }
 
     componentDidMount() {
-
+        
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetStakeholders", {
             method: "POST",
             headers: {
@@ -86,7 +86,13 @@ class MyForm extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleSubmit = (event) => {       
+    handleSingleChange = e => {
+        this.setState({
+          note: e.target.value
+        });
+      };
+
+    handleSubmit = (event) => {
         const requestOptions = {
             method: "POST",
             headers: {
@@ -104,11 +110,11 @@ class MyForm extends React.Component {
         .then(function (response) {
             if(response.success === true)
             {
-alert(response.message);
-window.location.href = "/DM/DMActionViewPage";
+                alert(response.message);
+                window.location.href = "/DM/DMActionViewPage";
             }
             else{
-alert(response.message);
+                alert(response.message);
             }
             return response;
         });
@@ -186,10 +192,9 @@ alert(response.message);
                         <label>
                             Enter note:
                             <input
-                                type="text"
-                                value={this.state.note}
                                 name="note"
-                                onChange={this.handleChange}
+                                type="text"                                
+                                onBlur={this.handleSingleChange}                              
                             />
                         </label>
 
