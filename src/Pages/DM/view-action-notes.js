@@ -16,27 +16,15 @@ class ViewActionNotes extends React.Component {
         cookies = new Cookies();
         this.state = {
             actionNotesList: [],
-            actionList: [],
             action_id: props.actionid,
-            showCommentForm: false,
             token: JSON.parse(localStorage.getItem('currentUser')).token,
             objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
-            note: "",
             role: JSON.parse(localStorage.getItem('UserRole')).permissionLevelId,
-            drawers: "",           
             error: ""
         };
     }
 
     componentDidMount() {
-        var isuserassignee = false;
-
-        if (this.state.role === 2 || this.state.role === 3) {
-            isuserassignee = false;
-        }
-        else {
-            isuserassignee = true;
-        }
 
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetActionNoteByEmail", {
             method: "POST",
@@ -47,8 +35,7 @@ class ViewActionNotes extends React.Component {
             },
             body: JSON.stringify({
                 action_id: this.state.action_id,
-                objectId: this.state.objectId,
-                isassignee: isuserassignee,
+                objectId: this.state.objectId
             }),
         })
             .then((response) => 
@@ -57,7 +44,7 @@ class ViewActionNotes extends React.Component {
             .then((response) => {
                 if (response.message !== "Unauthorized") {
                     this.setState({
-                        actionNotesList: response.actions,
+                        actionNotesList: response.actions
                     });
                 }
                 else{
@@ -84,7 +71,7 @@ class ViewActionNotes extends React.Component {
             <div style={{ border: "1px solid" }}>
                 <h3>{this.state.error}</h3>
                 {this.state.actionNotesList.map((note) => (
-                    <p>{note.comment}</p>
+                    <h4>{note.comment}</h4>
                 ))}
             </div>           
         );

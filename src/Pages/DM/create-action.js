@@ -102,6 +102,14 @@ class MyForm extends React.Component {
         )
         .then((response) => response.json())
         .then(function (response) {
+            if(response.success === true)
+            {
+alert(response.message);
+window.location.href = "/DM/DMActionViewPage";
+            }
+            else{
+alert(response.message);
+            }
             return response;
         });
 
@@ -145,7 +153,7 @@ class MyForm extends React.Component {
                     >
                         <h3 >{this.state.error}</h3>
                         <label>Select Stakeholder type:</label>
-                        <select name="assignee" onChange={(e) => this.handleChange(e)} value={(e) => e.target.value}>
+                        <select name="assignee" onChange={(e) => this.handleChange(e)} value={this.state.assignee}>
                             {this.state.stakeholdersList.map((stakeholder) => (
                                 <option
                                     key={stakeholder.Id}
@@ -162,7 +170,7 @@ class MyForm extends React.Component {
                         <select
                             name="disposition_type_id"
                             onChange={(e) => this.handleChange(e)}
-                            value={(e) => e.target.value}
+                            value={this.state.disposition_type_id}
                         >
                             {this.state.dispositionList.map((disposition) => (
                                 <option
