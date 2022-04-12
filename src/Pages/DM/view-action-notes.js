@@ -16,13 +16,10 @@ class ViewActionNotes extends React.Component {
         cookies = new Cookies();
         this.state = {
             actionNotesList: [],
-            actionList: [],
             action_id: props.actionid,
-            showCommentForm: false,           
-            objectId: authenticationService.currentUserValue.account.localAccountId,
-            note: "",
-            role: 1,
-            drawers: "",           
+            token: JSON.parse(localStorage.getItem('currentUser')).token,
+            objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
+            role: JSON.parse(localStorage.getItem('UserRole')).permissionLevelId,
             error: ""
         };
     }
@@ -39,7 +36,7 @@ class ViewActionNotes extends React.Component {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                'Authorization': 'Bearer ' + this.state.token,
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({
@@ -53,7 +50,7 @@ class ViewActionNotes extends React.Component {
             .then((response) => {
                 if (response.message !== "Unauthorized") {
                     this.setState({
-                        actionNotesList: response.actions,
+                        actionNotesList: response.actions
                     });
                 }
                 else{
@@ -80,7 +77,7 @@ class ViewActionNotes extends React.Component {
             <div style={{ border: "1px solid" }}>
                 <h3>{this.state.error}</h3>
                 {this.state.actionNotesList.map((note) => (
-                    <p>{note.comment}</p>
+                    <h4>{note.comment}</h4>
                 ))}
             </div>           
         );

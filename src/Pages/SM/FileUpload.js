@@ -18,6 +18,8 @@ const FileUpload = (props) => {
     const [filenames, setFileNames] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");    
     const [drawers, setDrawer] = useState("");
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
     const cookies = new Cookies();
     const rootReducer = combineReducers({
         authorised
@@ -92,7 +94,7 @@ const FileUpload = (props) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                    'Authorization': 'Bearer ' + token,
                     'oid': cookies.get('oid')
                 },
                 body: JSON.stringify({ 'FileTypeIds': items.toString() })
@@ -147,15 +149,17 @@ const FileUpload = (props) => {
         if (errorMessage != " " || errorMessage != "") {
             const formData = new FormData(e.target);
 
-            formData.append('auth', authenticationService.currentUserValue.token);
-            formData.append('objectId', authenticationService.currentUserValue.account.localAccountId);
+            formData.append('auth', token);
+            formData.append('objectId', objectId);
             fetch(
                 process.env.REACT_APP_SERVER_BASE_URL + 'storage/blobupload',
                 {
                     method: 'POST',
+                    mode: 'cors',              
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
+                        "Access-Control-Allow-Origin" : "*", 
+                        "Access-Control-Allow-Credentials" : true ,
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
                         'oid': cookies.get('oid')
                     },
                     body: formData,
@@ -173,9 +177,7 @@ const FileUpload = (props) => {
                     console.error('Error:', error);
                 });
         }
-
     };
-
 
     const validateNumberOfColumns = (fileColNumber, requiredColNumber) => {
         if (fileColNumber.toString() !== requiredColNumber.toString()) {

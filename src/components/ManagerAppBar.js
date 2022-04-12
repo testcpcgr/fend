@@ -55,16 +55,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-  const history = useNavigate();
-  const dispatch = useDispatch();
+const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
   var [permissionDetails, setPermissionDetails] = useState([]);
   const cookies = new Cookies();
   const { instance } = useMsal();
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
-  const [userLoggedIn, setUserLoggedIn] = React.useState({});
-  const [dmmenuopen, setDMOpen] = React.useState(false);
-  const [reportmenuopen, setReportOpen] = React.useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useState({});
+  const [dmmenuopen, setDMOpen] = useState(false);
+  const [reportmenuopen, setReportOpen] = useState(false);
   useEffect(() => {
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
@@ -90,10 +90,10 @@ const ManagerAppBar = (props) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+        'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
         'oid': cookies.get('oid')
       },
-      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId }),
+      body: JSON.stringify({ 'objectId': objectId }),
     };
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
       .then((response) => response.json())
@@ -109,11 +109,12 @@ const ManagerAppBar = (props) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+        'Authorization': 'Bearer ' + token,//JSON.parse(localStorage.getItem('currentUser')).token,
         'oid': cookies.get('oid')
       },
-      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser')).account.localAccountId, 'clientId': authenticationService.clientId }),
+      body: JSON.stringify({ 'objectId': objectId, 'clientId': authenticationService.clientId }),
     };
+
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
       .then(result => {
@@ -139,7 +140,7 @@ const ManagerAppBar = (props) => {
   return (
 
     <div className={classes.root}>
-      <Drawer open={drawer} onClose={drawer} onClose={toggleDrawer(false)}>
+      <Drawer open={drawer} onClose={toggleDrawer(false)}>
         <div
           className={classes.list}
           style={{

@@ -17,8 +17,8 @@ class MyForm extends React.Component {
             disposition_type_id: 0,
             response_type_id: null,
             note: "",
-            token: authenticationService.currentUserValue.token,
-            objectId: authenticationService.currentUserValue.account.localAccountId,
+            token: JSON.parse(localStorage.getItem('currentUser'))?.token,
+            objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
             assignee: 0,
             stakeholdersList: [
                 { Id: 0, name: " --- Select a State ---", User_Type: "" },
@@ -30,7 +30,7 @@ class MyForm extends React.Component {
     }
 
     componentDidMount() {
-
+        
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetStakeholders", {
             method: "POST",
             headers: {
@@ -86,7 +86,13 @@ class MyForm extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleSubmit = (event) => {       
+    handleSingleChange = e => {
+        this.setState({
+          note: e.target.value
+        });
+      };
+
+    handleSubmit = (event) => {
         const requestOptions = {
             method: "POST",
             headers: {
@@ -102,6 +108,14 @@ class MyForm extends React.Component {
         )
         .then((response) => response.json())
         .then(function (response) {
+            if(response.success === true)
+            {
+                alert(response.message);
+                window.location.href = "/DM/DMActionViewPage";
+            }
+            else{
+                alert(response.message);
+            }
             return response;
         });
 
@@ -145,7 +159,7 @@ class MyForm extends React.Component {
                     >
                         <h3 >{this.state.error}</h3>
                         <label>Select Stakeholder type:</label>
-                        <select name="assignee" onChange={(e) => this.handleChange(e)} value={(e) => e.target.value}>
+                        <select name="assignee" onChange={(e) => this.handleChange(e)} value={this.state.assignee}>
                             {this.state.stakeholdersList.map((stakeholder) => (
                                 <option
                                     key={stakeholder.Id}
@@ -162,7 +176,7 @@ class MyForm extends React.Component {
                         <select
                             name="disposition_type_id"
                             onChange={(e) => this.handleChange(e)}
-                            value={(e) => e.target.value}
+                            value={this.state.disposition_type_id}
                         >
                             {this.state.dispositionList.map((disposition) => (
                                 <option
@@ -178,10 +192,9 @@ class MyForm extends React.Component {
                         <label>
                             Enter note:
                             <input
-                                type="text"
-                                value={this.state.note}
                                 name="note"
-                                onChange={this.handleChange}
+                                type="text"                                
+                                onBlur={this.handleSingleChange}                              
                             />
                         </label>
 
