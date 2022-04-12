@@ -10,6 +10,8 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { useNavigate } from "react-router-dom";
 import { activeDirectoryService } from '../services/authPopup';
 import { useMsal } from "@azure/msal-react";
+import Cookies from 'universal-cookie';
+
 import {
     Button
   } from "@material-ui/core";
@@ -19,13 +21,14 @@ const HomePage = () => {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const [currentUser, setUser] = useState(authenticationService.currentUserValue);
+    var cookies =  new Cookies();
     const rootReducer = combineReducers({
         authorised
     });
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated) {        
             history('/');            
         }       
     }, [])

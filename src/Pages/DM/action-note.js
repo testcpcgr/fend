@@ -26,7 +26,7 @@ const ActionNote = (props) => {
                 'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
                 'oid': cookies.get('oid')
             },
-            body: JSON.stringify({ 'action_id': action_id, 'note': note, email: authenticationService.currentUserValue.account.username, token:authenticationService.currentUserValue.token})
+            body: JSON.stringify({ 'action_id': action_id, 'note': note, objectId: authenticationService.currentUserValue.account.localAccountId})
         };
         fetch(process.env.REACT_APP_SERVER_BASE_URL + 'drivermonitoring/CreateActionNotes', requestOptions)
             .then(function (response) {
