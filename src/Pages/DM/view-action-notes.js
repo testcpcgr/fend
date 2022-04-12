@@ -25,6 +25,12 @@ class ViewActionNotes extends React.Component {
     }
 
     componentDidMount() {
+        var isuserassignee = false;
+        // if (this.state.role === "1") {
+        //     isuserassignee = false;
+        // } else {
+        //     isuserassignee = true;
+        // }
 
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetActionNoteByEmail", {
             method: "POST",

@@ -66,7 +66,6 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
   const [dmmenuopen, setDMOpen] = useState(false);
   const [reportmenuopen, setReportOpen] = useState(false);
   useEffect(() => {
-
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
 
@@ -82,13 +81,11 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
   const [location, setLocation] = useState("Home");
 
   useEffect(() => {
-
     setLocation(props.location);
   }, props.location);
 
 
-  useEffect(() => {  
-    
+  useEffect(() => {
     var requestOptions = {
       method: 'POST',
       headers: {
@@ -107,7 +104,6 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
         }
       });
 
-
     setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
     requestOptions = {
       method: 'POST',
@@ -123,9 +119,9 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
       .then((response) => response.json())
       .then(result => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {      
+        {
           setPermissionDetails(result.result);
-          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId, role: result.result[0].Role }));
+          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
       });
   }, []);
