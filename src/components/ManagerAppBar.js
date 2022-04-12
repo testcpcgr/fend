@@ -66,7 +66,6 @@ const ManagerAppBar = (props) => {
   const [dmmenuopen, setDMOpen] = React.useState(false);
   const [reportmenuopen, setReportOpen] = React.useState(false);
   useEffect(() => {
-
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
 
@@ -82,13 +81,11 @@ const ManagerAppBar = (props) => {
   const [location, setLocation] = useState("Home");
 
   useEffect(() => {
-
     setLocation(props.location);
   }, props.location);
 
 
-  useEffect(() => {  
-    
+  useEffect(() => {
     var requestOptions = {
       method: 'POST',
       headers: {
@@ -101,18 +98,12 @@ const ManagerAppBar = (props) => {
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
       .then((response) => response.json())
       .then(result => {
-          console.log(result);
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
         {      
           localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
         }
       });
 
-
-
-
-
-    console.log('clientid',authenticationService.clientId);   
     setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
     requestOptions = {
       method: 'POST',
@@ -127,9 +118,9 @@ const ManagerAppBar = (props) => {
       .then((response) => response.json())
       .then(result => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {      
+        {
           setPermissionDetails(result.result);
-          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId, role: result.result[0].Role }));
+          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
       });
   }, []);

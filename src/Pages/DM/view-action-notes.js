@@ -29,11 +29,11 @@ class ViewActionNotes extends React.Component {
 
     componentDidMount() {
         var isuserassignee = false;
-        if (this.state.role === "1") {
-            isuserassignee = false;
-        } else {
-            isuserassignee = true;
-        }
+        // if (this.state.role === "1") {
+        //     isuserassignee = false;
+        // } else {
+        //     isuserassignee = true;
+        // }
 
         fetch(process.env.REACT_APP_SERVER_BASE_URL + "drivermonitoring/GetActionNoteByEmail", {
             method: "POST",
@@ -44,8 +44,7 @@ class ViewActionNotes extends React.Component {
             },
             body: JSON.stringify({
                 action_id: this.state.action_id,
-                objectId: this.state.objectId,
-                isassignee: isuserassignee,
+                objectId: this.state.objectId
             }),
         })
             .then((response) => 
