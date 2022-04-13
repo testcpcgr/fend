@@ -1,9 +1,8 @@
-import { msalConfig, loginRequest, tokenRequest } from './authConfig';
-import { callMSGraph } from './graph';
-import { graphConfig } from './graphConfig';
+import { msalConfig, loginRequest } from './authConfig';
+//import { callMSGraph } from './graph';
+//import { graphConfig } from './graphConfig';
 import Cookies from 'universal-cookie';
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
-import { useMsal } from "@azure/msal-react";
 // Create the main myMSALObj instance
 // configuration parameters are located at authConfig.js
 const myMSALObj = new PublicClientApplication(msalConfig);

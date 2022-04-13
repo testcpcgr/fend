@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
-import ManagerAppbar from "../../components/ManagerAppBar";
-import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
-import authorised from "../../reduxReduncer/authorised";
-import { Provider } from 'react-redux';
-import { authenticationService } from '../../services/authentication.service';
+// import { combineReducers } from 'redux';
+import { Typography } from "@material-ui/core";
+// import authorised from "../../reduxReduncer/authorised";
 import Cookies from 'universal-cookie';
 
 const ActionNote = (props) => {
     const [action_id, setActionId] = useState();
     const [note, setNote] = useState();
-    const [drawers, setDrawer] = useState("");
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+    const token= JSON.parse(localStorage.getItem('currentUser'))?.token;
+    const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;
     const cookies = new Cookies();
     const handleChange = (event) => {
         setActionId(props.actionid);
@@ -39,11 +34,10 @@ const ActionNote = (props) => {
         event.preventDefault();
     };
 
-    const rootReducer = combineReducers({
-        authorised
-    });
+    // const rootReducer = combineReducers({
+    //     authorised
+    // });
 
-    const store = createStore(rootReducer);
     const Panel = (props) => {
         return (
             <div hidden={props.value !== props.index}>

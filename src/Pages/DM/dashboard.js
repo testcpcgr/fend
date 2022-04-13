@@ -1,33 +1,34 @@
 import ManagerAppbar from "../../components/ManagerAppBar";
 import IFrame from "../../components/IFrame";
-import { authenticationService } from '../../services/authentication.service';
 import authorised from "../../reduxReduncer/authorised";
 import React, { useState, useEffect } from "react";
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
+import { backgroundColor } from "../../Constants";
 import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Provider } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
 function DMDashboardPage() {
     let location = useLocation();
-    const [drawers, setDrawer] = useState("");
-    var [reportType, setReportType] = useState("");
+    const drawers = "";
+    // var [reportType, setReportType] = useState("");
     const [reportTypeIframeLink, setreportTypeIframeLink] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+   
+   // const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
     const rootReducer = combineReducers({
         authorised
     });
     const store = createStore(rootReducer);
     const removeExtraSpace = (s) => s.trim().split(/ +/).join(' ');
-    const cookies = new Cookies();
+   
     useEffect(() => {
-        if (location.state !== 'undefined') {
-            setReportType(removeExtraSpace(location.state.ReportType));
-        }
+        const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+        const cookies = new Cookies();
+        // if (location.state !== 'undefined') {
+        //     setReportType(removeExtraSpace(location.state.ReportType));
+        // }
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + 'wipsam/getPowerBIReport', {
             method: 'POST',

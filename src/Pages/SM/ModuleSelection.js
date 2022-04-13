@@ -1,15 +1,14 @@
-import { authenticationService } from '../../services/authentication.service';
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
+import { backgroundColor} from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
 import authorised from "../../reduxReduncer/authorised";
 import React from "react";
 import { Link } from "react-router-dom";
 import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import Cookies from 'universal-cookie';
 import { Provider } from 'react-redux';
 var cookies = null;
-
+var  boxchecked= [];
 class ModuleSelection extends React.Component {
     constructor(props) {
         super(props);
@@ -25,8 +24,7 @@ class ModuleSelection extends React.Component {
             objectId: JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId,
             drawers: "",
             responseStatusCode: 0,
-            error:"",
-            boxchecked: []
+            error:""
         };
     }
 
@@ -111,7 +109,7 @@ class ModuleSelection extends React.Component {
                 selectedFileType: newList
             });
         }
-        this.state.boxchecked[event.target.value] = checked;        
+        boxchecked[event.target.value] = checked;
     }
 
     render() {
@@ -145,7 +143,7 @@ class ModuleSelection extends React.Component {
                                     <option key={module.Id} name={module.ModuleName} value={module.Id} >{module.ModuleName}</option>
                                 ))}
                             </ select>
-                            {hasModuleSelected == true ?
+                            {hasModuleSelected === true ?
                                 <div>
                                     <h3>{selectedModuleName} module included following files</h3>
                                     {this.state.fileTypeList.map((fileType, index) => {
@@ -161,7 +159,7 @@ class ModuleSelection extends React.Component {
                                                     name={fileType.FileName}
                                                     value={fileType.Id}
                                                     onChange={this.handleOnChange}
-                                                    checked={ this.state.boxchecked[fileType.Id]}
+                                                    checked={ boxchecked[fileType.Id]}
                                                 />
                                                 <label htmlFor={`custom-checkbox-${index}`}>{fileType.FileName}</label>
                                             </div>

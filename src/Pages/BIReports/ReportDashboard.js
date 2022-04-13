@@ -1,20 +1,20 @@
 import authorised from "../../reduxReduncer/authorised";
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
+import { backgroundColor } from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
 import IFrame from "../../components/IFrame";
 import { authenticationService } from '../../services/authentication.service';
 import React, { useState, useEffect } from "react";
 import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Provider } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { useLocation } from "react-router-dom";
 
 function DMDashboardPage() {
     let location = useLocation();
-    const cookies = new Cookies();
-    const [drawers, setDrawer] = useState("");
-    var [reportType, setReportType] = useState("");
+   
+    const drawers = "";
+    //var [reportType, setReportType] = useState("");
     const [reportTypeIframeLink, setreportTypeIframeLink] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     const rootReducer = combineReducers({
@@ -31,9 +31,10 @@ function DMDashboardPage() {
     };
     const removeExtraSpace = (s) => s.trim().split(/ +/).join(' ');
     useEffect(() => {
-        if (location.state !== 'undefined') {
-            setReportType(removeExtraSpace(location.state.ReportType));
-        }
+        const cookies = new Cookies();
+        // if (location.state !== 'undefined') {
+        //     setReportType(removeExtraSpace(location.state.ReportType));
+        // }
         fetch(
             process.env.REACT_APP_SERVER_BASE_URL + 'wipsam/getPowerBIReport', {
             method: 'POST',
@@ -48,7 +49,7 @@ function DMDashboardPage() {
             .then((response) => {
                 if (response.message !== 'Unauthorized') {
                     const selectedType = response.data.filter(row =>
-                        removeExtraSpace(row.FileName) == removeExtraSpace(location.state.ReportType)
+                        removeExtraSpace(row.FileName) === removeExtraSpace(location.state.ReportType)
                     );
                     if (selectedType.length > 0) {
                         setreportTypeIframeLink(selectedType[0].Iframe);

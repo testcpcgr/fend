@@ -7,22 +7,16 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { useSelector, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import List from "@material-ui/core/List";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ListAltIcon from "@material-ui/icons/ListAlt";
-import SettingsIcon from "@material-ui/icons/Settings";
-import CalculateIcon from "@mui/icons-material/Calculate";
-import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ListItemButton from "@mui/material/ListItemButton";
-import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
-import AlarmIcon from "@mui/icons-material/Alarm";
 import { activeDirectoryService } from '../services/authPopup';
 import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -55,10 +49,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;
   var [permissionDetails, setPermissionDetails] = useState([]);
   const cookies = new Cookies();
+  const oid =  cookies.get('oid');
   const { instance } = useMsal();
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
@@ -78,11 +73,10 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
     }
     setDrawer(open);
   };
-  const [location, setLocation] = useState("Home");
-
-  useEffect(() => {
-    setLocation(props.location);
-  }, props.location);
+  // const [location, setLocation] = useState("Home");
+  // useEffect(() => {
+  //   setLocation(props.location);
+  // }, props.location);
 
 
   useEffect(() => {
@@ -91,7 +85,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
+        'oid': oid
       },
       body: JSON.stringify({ 'objectId': objectId }),
     };
@@ -110,7 +104,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,//JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
+        'oid': oid
       },
       body: JSON.stringify({ 'objectId': objectId, 'clientId': authenticationService.clientId }),
     };
@@ -124,7 +118,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
           localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
       });
-  }, []);
+  }, [oid, token, objectId]);
 
 
   const handleLogOut = () => {

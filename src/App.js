@@ -5,46 +5,25 @@ import DMDashboardPage from "./Pages/DM/dashboard";
 import DMActionViewPage from "./Pages/DM/view-actions";
 import DMCreateActionPage from "./Pages/DM/create-action";
 import BIReports from "./Pages/BIReports/ReportDashboard";
-import { Role } from './helpers/Roles';
-import { history } from './helpers/history';
-import { authenticationService } from './services/authentication.service';
 import PrivateRoute from './components/PrivateRoute';
 import FileUpload from "./Pages/SM/FileUpload";
 import ModuleSelection from "./Pages/SM/ModuleSelection";
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  Link,
-  useNavigate
+  Route
 } from "react-router-dom";
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState();
-  const [isAdmin, setIsAdminFlag] = useState();
-  useEffect(() => {
+  // useEffect(() => {
 
-    // authenticationService.currentUser.subscribe(x => {
-    //   if (x !== null && typeof x.message === "undefined") {
-    //     setCurrentUser(x);
-    //     setIsAdminFlag(x && x.role === Role.Admin);
-    //   }
-    // });
-  });
+
+  // });
 
   return (
     <Router>
       <div className="App">
-        {/* {currentUser &&
-          <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <div className="navbar-nav">
-              <Link to="/" className="nav-item nav-link">Home</Link>
-              {isAdmin && <Link to="/admin" className="nav-item nav-link">Admin</Link>}
-              <a onClick={logout} className="nav-item nav-link">Logout</a>
-            </div>
-          </nav>
-        } */}
         <Routes>
           <Route path='/SM/FileUpload' element={<PrivateRoute />}>
             <Route path="/SM/FileUpload/" strict exact element={<FileUpload />} />
@@ -64,14 +43,10 @@ function App() {
           <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
             <Route path='/Reports/ReportDashboard' element={<BIReports />} />
           </Route>
-          <Route path='/' element={<HomePage />} />
-          {/* <Route exact path='/Login' element={<PrivateRoute />}>
-            <Route exact path='/Login' element={<LoginPage />} />
-          </Route> */}
+          <Route path='/' element={<HomePage />} />         
         </Routes>
       </div>
     </Router>
-    // <HomePage />
   );
 }
 
