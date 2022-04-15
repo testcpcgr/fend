@@ -11,6 +11,8 @@ import { authenticationService } from './services/authentication.service';
 import PrivateRoute from './components/PrivateRoute';
 import FileUpload from "./Pages/SM/FileUpload";
 import ModuleSelection from "./Pages/SM/ModuleSelection";
+import DMEGeographyApiStorage from "./Pages/CMSApi/DMEGeography";
+import DMEServiceApiStorage from "./Pages/CMSApi/DMEService";
 import {
   BrowserRouter as Router,
   Routes,

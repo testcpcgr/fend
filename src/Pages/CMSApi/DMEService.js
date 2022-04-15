@@ -28,7 +28,7 @@ const store = createStore(rootReducer);
           response.json()       
       )
       .then((response) => {
-          console.log(response);  
+          //console.log(response);  
           setData(response);
           fetch(
             process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEServiceDataStorage', {
