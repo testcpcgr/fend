@@ -64,6 +64,12 @@ function App() {
           <Route path='/Reports/ReportDashboard' element={<PrivateRoute />}>
             <Route path='/Reports/ReportDashboard' element={<BIReports />} />
           </Route>
+          <Route path='/CMSApi/DMEGeography' element={<PrivateRoute />}>
+            <Route path='/CMSApi/DMEGeography' element={<DMEGeographyApiStorage />} />
+          </Route>
+          <Route path='/CMSApi/DMEService' element={<PrivateRoute />}>
+            <Route path='/CMSApi/DMEService' element={<DMEServiceApiStorage />} />
+          </Route>
           <Route path='/' element={<HomePage />} />
           {/* <Route exact path='/Login' element={<PrivateRoute />}>
             <Route exact path='/Login' element={<LoginPage />} />
