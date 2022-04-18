@@ -33,6 +33,8 @@ import { useMsal } from "@azure/msal-react";
 import { authenticationService } from '../services/authentication.service';
 import Cookies from 'universal-cookie';
 import { ModuleName } from '../helpers/enum/Module_Enum';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,16 +57,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
-  var [permissionDetails, setPermissionDetails] = useState([]);
+  let navigate = useNavigate(); 
+
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+  const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+  
+  const classes = useStyles();
   const cookies = new Cookies();
   const { instance } = useMsal();
-  const [drawer, setDrawer] = useState(false);
-  const classes = useStyles();
+  
+  var [permissionDetails, setPermissionDetails] = useState([]);
+  var [userClientsList, setUserClientsList] = useState([]);
+    
   const [userLoggedIn, setUserLoggedIn] = useState({});
+  const [currentClient, setCurrentClient] = useState('');
+  const [drawer, setDrawer] = useState(false);
   const [dmmenuopen, setDMOpen] = useState(false);
   const [reportmenuopen, setReportOpen] = useState(false);
+  const [location, setLocation] = useState("Home");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isProfileSwitched, setIsProfileSwitched] = useState(false);
+  const open = Boolean(anchorEl);
+
   useEffect(() => {
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
@@ -78,33 +92,36 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
     }
     setDrawer(open);
   };
-  const [location, setLocation] = useState("Home");
 
   useEffect(() => {
     setLocation(props.location);
   }, props.location);
 
+  useEffect(() => {    
 
-  useEffect(() => {
-    var requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
-      },
-      body: JSON.stringify({ 'objectId': objectId }),
-    };
-    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
-      .then((response) => response.json())
-      .then(result => {
-        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {      
-          localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
-        }
+    if(!isProfileSwitched){
+      console.log(isProfileSwitched);
+      var requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
+          'oid': cookies.get('oid')
+        },
+        body: JSON.stringify({ 'objectId': objectId }),
+      };    
+      fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+        .then((response) => response.json())
+        .then(result => {
+          if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+          {
+            setCurrentClient(result.result[0].CompanyName);
+            authenticationService.setClientLocalStorage(result.result[0].ClientId);
+          }
       });
-
+    }
     setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
+    
     requestOptions = {
       method: 'POST',
       headers: {
@@ -114,7 +131,6 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
       },
       body: JSON.stringify({ 'objectId': objectId, 'clientId': authenticationService.clientId }),
     };
-
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
       .then(result => {
@@ -123,8 +139,28 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
           setPermissionDetails(result.result);
           localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
-      });
-  }, []);
+    });
+    
+    requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'oid': cookies.get('oid')
+      },
+      body: JSON.stringify({ 'objectId': objectId }),
+    };
+    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getAllUserClients', requestOptions)
+      .then((response) => response.json())
+      .then(result => {
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+        {
+          console.log(result.result);
+          setUserClientsList(result.result.filter(item => item.ClientId !== authenticationService.clientId));
+        }
+    });
+  
+  }, [anchorEl]);
 
 
   const handleLogOut = () => {
@@ -134,9 +170,22 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
   const handleDMClick = () => {
     setDMOpen(!dmmenuopen);
   };
+
   const handleReportClick = () => {
     setReportOpen(!reportmenuopen);
   };
+
+  const handleNameClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleNameClose = (clientId) => {
+    console.log(anchorEl);
+    setIsProfileSwitched(true);
+    setAnchorEl(null);
+    authenticationService.setClientLocalStorage(clientId);
+    //navigate("/?isProfileSwitched=1");
+  };
+
   return (
 
     <div className={classes.root}>
@@ -396,15 +445,33 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
               {/* {location} */}
             </Typography>
           </div>
-          <Button color="inherit" startIcon={<PersonIcon />}>
+          <Button color="inherit" onClick={handleNameClick} startIcon={<PersonIcon />}>
             <Typography
               variant="p"
               className={classes.title}
               style={{ fontSize: 12, color: mainAppBarTextColor }}
             >
               {userLoggedIn.name}
+              <br/>
+              {currentClient}
             </Typography>
           </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {
+          userClientsList.map((item) =>(
+         
+            <MenuItem onClick={()=> handleNameClose(item.ClientId)}>{item.CompanyName}</MenuItem>
+          ))
+        }
+      </Menu>
+          
         </Toolbar>
       </AppBar>
     </div>
