@@ -11,49 +11,75 @@ import authorised2 from "../../reduxReduncer/authorised";
 function App() {
   const [data,setData] = useState([]);
   const [drawers, setDrawer] = useState("");
+  const [size, setSize] = useState(5000);
   const rootReducer = combineReducers({
     authorised2
 });
-const store = createStore(rootReducer);
-  useEffect(() => {
-    const cookies = new Cookies();
-    fetch("https://data.cms.gov/data-api/v1/dataset/673030ae-ceed-4561-8fca-b1275395a86a/data?keyword=Chronic&offset=0", 
-    {
-      method: "GET",
-      headers: {
-          "accept": "application/json"
-      }
-    })
-      .then((response) => 
-          response.json()       
-      )
-      .then((response) => {
-          //console.log(response);   
-          setData(response);    
-          fetch(
-            process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEGeographyDataStorage', {
-            method: 'POST',            
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
-                'oid': cookies.get('oid')
-            },
-            body: JSON.stringify(response)
-        })
-        .then((response) => 
-            response.json()       
-          )
-        .then((response) => {
-            if(response.success)
-            {
-              alert("data fetch completed: "+response.message);
-            }
-            else{
-              alert("unable to store record : "+ response.message);
-            }
-          }) 
+  const store = createStore(rootReducer);
 
+  useEffect(async () => {
+    const cookies = new Cookies();
+    var rowsReturned=0;
+    var offset = 0;
+    var fetchingFinished = 0;
+    do {
+      console.log(size, offset);
+                    
+      await fetch("https://data.cms.gov/data-api/v1/dataset/bcd4a866-c07f-4ec3-a780-1fa7f0399ab9/data?size="+size+"&offset="+offset, 
+      {
+        method: "GET",
+        headers: {
+            "accept": "application/json"
+        }
       })
+      .then(async (response) => 
+        response.json()       
+      )
+      .then(async (response) => {
+        console.log(response.length)
+        rowsReturned = response.length;
+        if(rowsReturned < size)
+          fetchingFinished = 1;        
+        
+        // if(response.length > 0 && offset === 0)
+        // {
+        //   await fetch(
+        //     process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DmeDeleteExistingData', {
+        //     method: 'POST',            
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
+        //         'oid': cookies.get('oid')
+        //     },
+        //     body: JSON.stringify({tableName: 'DME_Geography'})
+        //   })
+        // }
+        
+        await fetch(
+              process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEGeographyDataStorage', {
+              method: 'POST',            
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
+                  'oid': cookies.get('oid')
+              },
+              body: JSON.stringify(response)
+        })
+        .then(async (response) => 
+          response.json()       
+        )
+        .then(async (response) => {
+          if(response.success)
+            {
+              offset = (offset+5000);
+            }
+          else{
+            fetchingFinished = 1;
+            alert("unable to store record : "+ response.message);
+          }
+        })
+      })
+    } while (!fetchingFinished)
 }, [])
 const Panel = (props) => {
   return (

@@ -27,15 +27,34 @@ const HomePage = () => {
     });
     const store = createStore(rootReducer);
     const [drawers, setDrawer] = useState("");
+    const oid =  cookies.get('oid');
     useEffect(() => {
-        if (isAuthenticated) {        
+        if (isAuthenticated) {            
             history('/');            
         }       
     }, [])
     
     const handleLogin = () => {
         activeDirectoryService.signIn(instance);
-        if (currentUser !== null) {            
+        if (currentUser !== null) {
+            var requestOptions = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+                  'oid': oid
+                },
+                body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId, 'clientId': authenticationService.clientId }),
+              };
+          
+              fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
+                .then((response) => response.json())
+                .then(result => {
+                  if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+                  {
+                    localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
+                  }
+                });
             history("/");
         }
     };   
