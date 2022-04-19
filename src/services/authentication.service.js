@@ -33,12 +33,10 @@ function login(username, password) {
 }
 
 function logout() {
-    // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     currentUserSubject.next(null);
 }
 
 function setClientLocalStorage(clientId){
-    console.log(clientId)
     localStorage.setItem('ClientId', JSON.stringify(clientId));
 }

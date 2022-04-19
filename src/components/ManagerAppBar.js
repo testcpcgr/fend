@@ -76,7 +76,7 @@ const ManagerAppBar = (props) => {
   const [reportmenuopen, setReportOpen] = useState(false);
   const [location, setLocation] = useState("Home");
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isProfileSwitched, setIsProfileSwitched] = useState(false);
+  const [isProfileSwitched, setIsProfileSwitched] = useState(localStorage.getItem('IsProfileSwitched'));
   const open = Boolean(anchorEl);
 
   useEffect(() => {
@@ -99,8 +99,7 @@ const ManagerAppBar = (props) => {
 
   useEffect(() => {    
 
-    if(!isProfileSwitched){
-      console.log(isProfileSwitched);
+    if(!isProfileSwitched){     
       var requestOptions = {
         method: 'POST',
         headers: {
@@ -135,7 +134,7 @@ const ManagerAppBar = (props) => {
       .then((response) => response.json())
       .then(result => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {
+        {          
           setPermissionDetails(result.result);
           localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
@@ -155,12 +154,12 @@ const ManagerAppBar = (props) => {
       .then(result => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
         {
-          console.log(result.result);
-          setUserClientsList(result.result.filter(item => item.ClientId !== authenticationService.clientId));
+          setCurrentClient(result.result.filter(item => item.ClientId === parseInt(localStorage.getItem('ClientId')))[0].CompanyName);
+          setUserClientsList(result.result.filter(item => item.ClientId !== parseInt(localStorage.getItem('ClientId'))));
         }
     });
   
-  }, [anchorEl]);
+  }, []);
 
 
   const handleLogOut = () => {
@@ -178,12 +177,12 @@ const ManagerAppBar = (props) => {
   const handleNameClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleNameClose = (clientId) => {
-    console.log(anchorEl);
-    setIsProfileSwitched(true);
-    setAnchorEl(null);
+  const handleNameClose = (clientId) => {   
+    localStorage.setItem('IsProfileSwitched', true);
     authenticationService.setClientLocalStorage(clientId);
-    //navigate("/?isProfileSwitched=1");
+    setIsProfileSwitched(true);
+    setAnchorEl(null);  
+    window.location.reload(false);
   };
 
   return (
