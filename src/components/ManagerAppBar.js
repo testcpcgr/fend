@@ -33,6 +33,7 @@ import { useMsal } from "@azure/msal-react";
 import { authenticationService } from '../services/authentication.service';
 import Cookies from 'universal-cookie';
 import { ModuleName } from '../helpers/enum/Module_Enum';
+import { renderSwitch } from '../helpers/UrlModuleMapper';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -93,9 +94,9 @@ const ManagerAppBar = (props) => {
     setDrawer(open);
   };
 
-  useEffect(() => {
-    setLocation(props.location);
-  }, props.location);
+  // useEffect(() => {
+  //   setLocation(props.location);
+  // }, props.location);
 
   useEffect(() => {    
 
@@ -181,8 +182,8 @@ const ManagerAppBar = (props) => {
     localStorage.setItem('IsProfileSwitched', true);
     authenticationService.setClientLocalStorage(clientId);
     setIsProfileSwitched(true);
-    setAnchorEl(null);  
-    window.location.reload(false);
+    setAnchorEl(null);
+    window.location.reload(false);    
   };
 
   return (
@@ -309,7 +310,7 @@ const ManagerAppBar = (props) => {
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsam, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=Wipsam'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam' }}
                       >
@@ -326,7 +327,7 @@ const ManagerAppBar = (props) => {
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamManagement, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=WipsamManagement'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam Management' }}
                       >
@@ -343,7 +344,7 @@ const ManagerAppBar = (props) => {
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamPCA, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=WipsamPCA'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam PCA' }}
                       >
@@ -360,7 +361,7 @@ const ManagerAppBar = (props) => {
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName:ModuleName.ReportAudit, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=AuditReport'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Audit Report' }}
                       >
@@ -377,7 +378,7 @@ const ManagerAppBar = (props) => {
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportPriceReport, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=PricingTool'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Pricing Tool' }}
                       >
