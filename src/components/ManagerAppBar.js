@@ -33,6 +33,9 @@ import { useMsal } from "@azure/msal-react";
 import { authenticationService } from '../services/authentication.service';
 import Cookies from 'universal-cookie';
 import { ModuleName } from '../helpers/enum/Module_Enum';
+import { renderSwitch } from '../helpers/UrlModuleMapper';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,16 +58,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
-  var [permissionDetails, setPermissionDetails] = useState([]);
+  let navigate = useNavigate(); 
+
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
+  const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+  
+  const classes = useStyles();
   const cookies = new Cookies();
   const { instance } = useMsal();
-  const [drawer, setDrawer] = useState(false);
-  const classes = useStyles();
+  
+  var [permissionDetails, setPermissionDetails] = useState([]);
+  var [userClientsList, setUserClientsList] = useState([]);
+    
   const [userLoggedIn, setUserLoggedIn] = useState({});
+  const [currentClient, setCurrentClient] = useState('');
+  const [drawer, setDrawer] = useState(false);
   const [dmmenuopen, setDMOpen] = useState(false);
   const [reportmenuopen, setReportOpen] = useState(false);
+  const [location, setLocation] = useState("Home");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isProfileSwitched, setIsProfileSwitched] = useState(localStorage.getItem('IsProfileSwitched'));
+  const open = Boolean(anchorEl);
+
   useEffect(() => {
     setDrawer(props.drawerOption);
   }, [props.drawerOption]);
@@ -78,33 +93,35 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
     }
     setDrawer(open);
   };
-  const [location, setLocation] = useState("Home");
 
-  useEffect(() => {
-    setLocation(props.location);
-  }, props.location);
+  // useEffect(() => {
+  //   setLocation(props.location);
+  // }, props.location);
 
+  useEffect(() => {    
 
-  useEffect(() => {
-    var requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
-      },
-      body: JSON.stringify({ 'objectId': objectId }),
-    };
-    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
-      .then((response) => response.json())
-      .then(result => {
-        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {      
-          localStorage.setItem('ClientId', JSON.stringify(result.result[0].ClientId));
-        }
+    if(!isProfileSwitched){     
+      var requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
+          'oid': cookies.get('oid')
+        },
+        body: JSON.stringify({ 'objectId': objectId }),
+      };    
+      fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getDefaultClient', requestOptions)
+        .then((response) => response.json())
+        .then(result => {
+          if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+          {
+            setCurrentClient(result.result[0].CompanyName);
+            authenticationService.setClientLocalStorage(result.result[0].ClientId);
+          }
       });
-
+    }
     setUserLoggedIn(JSON.parse(localStorage.getItem('currentUser')).account);
+    
     requestOptions = {
       method: 'POST',
       headers: {
@@ -114,16 +131,35 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
       },
       body: JSON.stringify({ 'objectId': objectId, 'clientId': authenticationService.clientId }),
     };
-
     fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
       .then((response) => response.json())
       .then(result => {
         if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {
+        {          
           setPermissionDetails(result.result);
           localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
         }
-      });
+    });
+    
+    requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'oid': cookies.get('oid')
+      },
+      body: JSON.stringify({ 'objectId': objectId }),
+    };
+    fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getAllUserClients', requestOptions)
+      .then((response) => response.json())
+      .then(result => {
+        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+        {
+          setCurrentClient(result.result.filter(item => item.ClientId === parseInt(localStorage.getItem('ClientId')))[0].CompanyName);
+          setUserClientsList(result.result.filter(item => item.ClientId !== parseInt(localStorage.getItem('ClientId'))));
+        }
+    });
+  
   }, []);
 
 
@@ -134,9 +170,22 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
   const handleDMClick = () => {
     setDMOpen(!dmmenuopen);
   };
+
   const handleReportClick = () => {
     setReportOpen(!reportmenuopen);
   };
+
+  const handleNameClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleNameClose = (clientId) => {   
+    localStorage.setItem('IsProfileSwitched', true);
+    authenticationService.setClientLocalStorage(clientId);
+    setIsProfileSwitched(true);
+    setAnchorEl(null);
+    window.location.reload(false);    
+  };
+
   return (
 
     <div className={classes.root}>
@@ -261,7 +310,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsam, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=Wipsam'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam' }}
                       >
@@ -278,7 +327,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamManagement, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=WipsamManagement'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam Management' }}
                       >
@@ -295,7 +344,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportWipsamPCA, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=WipsamPCA'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Wipsam PCA' }}
                       >
@@ -312,7 +361,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName:ModuleName.ReportAudit, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=AuditReport'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Audit Report' }}
                       >
@@ -329,7 +378,7 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
                     PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.ReportPriceReport, permissionLevel: "Read" }) ?
 
                       <Link
-                        to='/Reports/ReportDashboard'
+                        to='/Reports/ReportDashboard?ReportType=PricingTool'
                         style={{ textDecoration: "none", color: "black" }}
                         state={{ ReportType: 'Pricing Tool' }}
                       >
@@ -396,15 +445,33 @@ const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('curren
               {/* {location} */}
             </Typography>
           </div>
-          <Button color="inherit" startIcon={<PersonIcon />}>
+          <Button color="inherit" onClick={handleNameClick} startIcon={<PersonIcon />}>
             <Typography
               variant="p"
               className={classes.title}
               style={{ fontSize: 12, color: mainAppBarTextColor }}
             >
               {userLoggedIn.name}
+              <br/>
+              {currentClient}
             </Typography>
           </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {
+          userClientsList.map((item) =>(
+         
+            <MenuItem onClick={()=> handleNameClose(item.ClientId)}>{item.CompanyName}</MenuItem>
+          ))
+        }
+      </Menu>
+          
         </Toolbar>
       </AppBar>
     </div>

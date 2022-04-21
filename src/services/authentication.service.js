@@ -8,7 +8,8 @@ export const authenticationService = {
     logout,
     currentUser: currentUserSubject.asObservable(),
     get currentUserValue () {return currentUserSubject.value; },
-    get clientId() {return clientId.value;}
+    get clientId() {return clientId.value;},
+    setClientLocalStorage
 };
 
 function login(username, password) {
@@ -32,7 +33,10 @@ function login(username, password) {
 }
 
 function logout() {
-    // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     currentUserSubject.next(null);
+}
+
+function setClientLocalStorage(clientId){
+    localStorage.setItem('ClientId', JSON.stringify(clientId));
 }
