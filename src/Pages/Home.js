@@ -7,7 +7,7 @@ import { createStore, combineReducers } from 'redux';
 import authorised from "../reduxReduncer/authorised";
 import logo from "../Images/logo.png";
 import { useIsAuthenticated } from "@azure/msal-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { activeDirectoryService } from '../services/authPopup';
 import { useMsal } from "@azure/msal-react";
 import Cookies from 'universal-cookie';
@@ -16,12 +16,15 @@ import {
     Button
   } from "@material-ui/core";
 
-const HomePage = () => {
+const HomePage = (props) => {
+    var cookies =  new Cookies();
+   
     const history = useNavigate();
     const { instance } = useMsal();
+    const location = useLocation();
     const isAuthenticated = useIsAuthenticated();
     const [currentUser, setUser] = useState(authenticationService.currentUserValue);
-    var cookies =  new Cookies();
+    const [drawers, setDrawer] = useState("");
     const rootReducer = combineReducers({
         authorised
     });
@@ -57,7 +60,9 @@ const HomePage = () => {
                 });
             history("/");
         }
-    };   
+    };
+    
+  
     return (
         <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
             {isAuthenticated ? <>
