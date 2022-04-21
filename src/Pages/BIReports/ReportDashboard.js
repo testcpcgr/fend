@@ -35,9 +35,9 @@ function DMDashboardPage() {
             setReportType(removeExtraSpace(location.state.ReportType));
         }
         fetch(
-            process.env.REACT_APP_SERVER_BASE_URL + 'wipsam/getPowerBIReport', {
+            process.env.REACT_APP_SERVER_BASE_URL + 'powerbi/getPowerBIReport', {
             method: 'POST',
-            body: JSON.stringify({ ModuleId: 2 }),
+            body: JSON.stringify({ ModuleId: 2, ClientId: authenticationService.clientId  }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + authenticationService.currentUserValue.token,
@@ -46,9 +46,9 @@ function DMDashboardPage() {
         })
             .then((response) => response.json())
             .then((response) => {
-                if (response.message !== 'Unauthorized') {
+                if (response.message !== 'Unauthorized' && response.message !== 'unable to fetch record') {
                     const selectedType = response.data.filter(row =>
-                        removeExtraSpace(row.FileName) == removeExtraSpace(location.state.ReportType)
+                        removeExtraSpace(row.Description) == removeExtraSpace(location.state.ReportType)
                     );
                     if (selectedType.length > 0) {
                         setreportTypeIframeLink(selectedType[0].Iframe);
