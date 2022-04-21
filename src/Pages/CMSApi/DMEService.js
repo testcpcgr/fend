@@ -20,71 +20,81 @@ function App() {
   const store = createStore(rootReducer);
   
   useEffect( async () => {
-    const cookies = new Cookies();
-    var rowsReturned=0;
-    var offset = 0;
-    var fetchingFinished = 0;
+    var proceed = window.confirm("Are you sure you want to start fetch and store process? It might take significant time to pull all records and store into database");
+    if (proceed) {
+      startProcess();
+    } else {
+      alert("Process wasn't initiated");
+    }
+  }, [])
 
-    await fetch(
-                  process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DmeDeleteExistingData', {
-                  method: 'POST',            
+const startProcess = async ()=>{
+
+  const cookies = new Cookies();
+  var rowsReturned=0;
+  var offset = 0;
+  var fetchingFinished = 0;
+
+  await fetch(
+                process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DmeDeleteExistingData', {
+                method: 'POST',            
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
+                    'oid': cookies.get('oid')
+                },
+                body: JSON.stringify({tableName: 'DME_Service'})
+  })
+ .then(async ()=>{
+    do {
+        console.log(size, offset);
+        await fetch("https://data.cms.gov/data-api/v1/dataset/d6d3de93-0579-408a-bcfe-c319f04069e7/data?size="+size+"&offset="+offset, 
+        {
+          method: "GET",
+          headers: {
+              "accept": "application/json"
+          }
+        })
+        .then(async (response) => 
+          response.json()
+        )
+        .then(async (response) => {
+            setFetchingFinishedLabel("");
+            rowsReturned = response.length;
+            if(rowsReturned < size)
+              fetchingFinished = 1;
+                            
+            await fetch(
+                  process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEServiceDataStorage', {
+                  method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
                       'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
                       'oid': cookies.get('oid')
                   },
-                  body: JSON.stringify({tableName: 'DME_Service'})
-    })
-   .then(async ()=>{
-        do {
-            console.log(size, offset);
-            await fetch("https://data.cms.gov/data-api/v1/dataset/d6d3de93-0579-408a-bcfe-c319f04069e7/data?size="+size+"&offset="+offset, 
-            {
-              method: "GET",
-              headers: {
-                  "accept": "application/json"
-              }
+                  body: JSON.stringify(response)
             })
             .then(async (response) => 
-              response.json()
+                  response.json()       
             )
             .then(async (response) => {
-              setFetchingFinishedLabel("");
-              rowsReturned = response.length;
-              if(rowsReturned < size)
-                fetchingFinished = 1;
-                              
-              await fetch(
-                    process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEServiceDataStorage', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
-                        'oid': cookies.get('oid')
-                    },
-                    body: JSON.stringify(response)
-              })
-              .then(async (response) => 
-                    response.json()       
-              )
-              .then(async (response) => {
-                    if(response.success)
-                    {
-                      offset = (offset+5000);
-                      setRowInserted(offset);
-                    }
-                    else{
-                      return;
-                      alert("unable to store record : "+ response.message);                  
-                    }
-              })
+                  if(response.success)
+                  {
+                    offset = (offset+5000);
+                    setRowInserted(offset);
+                  }
+                  else{
+                    return;
+                    alert("unable to store record : "+ response.message);                  
+                  }
             })
-        } while (!fetchingFinished)
-        if(fetchingFinished){
-          setFetchingFinishedLabel("Storing process finished. You can leave this page.");
-        }
-    });
-  }, [])
+        })
+    } while (!fetchingFinished)
+    if(fetchingFinished){
+      setFetchingFinishedLabel("Storing process finished. You can leave this page.");
+    }
+  });
+}
 
 const Panel = (props) => {
   return (
