@@ -55,6 +55,7 @@ function signOut(instance) {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('UserRole');
     localStorage.removeItem('ClientId');
+    localStorage.removeItem('IsProfileSwitched');
     cookies.remove('oid', { path: '/' });
 }
 
