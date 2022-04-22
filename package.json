@@ -17,11 +17,12 @@
     "material-ui-icons": "^1.0.0-beta.36",
     "morgan": "^1.10.0",
     "react": "^17.0.2",
+    "react-confirm-alert": "^2.8.0",
     "react-dom": "^17.0.2",
     "react-frame-component": "^5.2.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.0",
     "react-string-format": "^1.0.0",
     "rxjs": "^6.4.0",
     "universal-cookie": "^4.0.4",
@@ -52,17 +53,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "description": "",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cpcg-usa/cpcgr-Frontend.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cpcg-usa/cpcgr-Frontend/issues"
-  },
-  "homepage": "https://github.com/cpcg-usa/cpcgr-Frontend#readme"
+  }
 }
