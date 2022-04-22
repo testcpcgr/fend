@@ -10,6 +10,8 @@ import { authenticationService } from './services/authentication.service';
 import PrivateRoute from './components/PrivateRoute';
 import FileUpload from "./Pages/SM/FileUpload";
 import ModuleSelection from "./Pages/SM/ModuleSelection";
+import DMEGeographyApiStorage from "./Pages/CMSApi/DMEGeography";
+import DMEServiceApiStorage from "./Pages/CMSApi/DMEService";
 import {
   BrowserRouter as Router,
   Routes,
@@ -81,6 +83,12 @@ function App() {
           </Route>
           <Route path='/Reports/ReportDashboard/:ReportType' search='?ReportType=PricingTool' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.ReportPriceReport} permissionLevel="Read" />}>
             <Route path='/Reports/ReportDashboard/:ReportType' search='?ReportType=PricingTool' element={<BIReports />} />
+          </Route>
+          <Route path='/CMSApi/DMEGeography' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.DMEService} permissionLevel="Write" />}>
+            <Route path='/CMSApi/DMEGeography' element={<DMEGeographyApiStorage />} />
+          </Route>
+          <Route path='/CMSApi/DMEService' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.DMEGeography} permissionLevel="Write" />}>
+            <Route path='/CMSApi/DMEService' element={<DMEServiceApiStorage />} />
           </Route>
           <Route path='/' element={<HomePage />} />
         </Routes>
