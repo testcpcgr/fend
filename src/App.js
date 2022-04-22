@@ -84,10 +84,10 @@ function App() {
           <Route path='/Reports/ReportDashboard/:ReportType' search='?ReportType=PricingTool' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.ReportPriceReport} permissionLevel="Read" />}>
             <Route path='/Reports/ReportDashboard/:ReportType' search='?ReportType=PricingTool' element={<BIReports />} />
           </Route>
-          <Route path='/CMSApi/DMEGeography' element={<PrivateRoute />}>
+          <Route path='/CMSApi/DMEGeography' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.DMEService} permissionLevel="Write" />}>
             <Route path='/CMSApi/DMEGeography' element={<DMEGeographyApiStorage />} />
           </Route>
-          <Route path='/CMSApi/DMEService' element={<PrivateRoute />}>
+          <Route path='/CMSApi/DMEService' element={<PrivateRoute permissionList={permissionDetails}  module={ModuleName.DMEGeography} permissionLevel="Write" />}>
             <Route path='/CMSApi/DMEService' element={<DMEServiceApiStorage />} />
           </Route>
           <Route path='/' element={<HomePage />} />

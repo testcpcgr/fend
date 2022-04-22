@@ -29,7 +29,6 @@ const HomePage = (props) => {
         authorised
     });
     const store = createStore(rootReducer);
-    const [drawers, setDrawer] = useState("");
     const oid =  cookies.get('oid');
     useEffect(() => {
         if (isAuthenticated) {            

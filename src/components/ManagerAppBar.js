@@ -52,14 +52,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
-const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;
-  var [permissionDetails, setPermissionDetails] = useState([]);
-  let navigate = useNavigate(); 
-
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-  const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
-  
+  const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+  const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;    
   const classes = useStyles();
   const cookies = new Cookies();
   const oid =  cookies.get('oid');
@@ -106,7 +100,7 @@ const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localA
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
-          'oid': cookies.get('oid')
+          'oid': oid
         },
         body: JSON.stringify({ 'objectId': objectId }),
       };    
@@ -146,7 +140,7 @@ const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localA
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
-        'oid': cookies.get('oid')
+        'oid': oid
       },
       body: JSON.stringify({ 'objectId': objectId }),
     };
@@ -440,8 +434,6 @@ const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localA
                   }
                 </List>
               </Collapse>
-
-
             </div>
           </List>
           <div onClick={handleLogOut}>
