@@ -40,7 +40,7 @@ function DMDashboardPage() {
         })
             .then((response) => response.json())
             .then((response) => {
-                if (response.message !== 'Unauthorized') {
+                if (response.message !== 'Unauthorized' && response.message !== 'unable to fetch record') {
                     const selectedType = response.data.filter(row =>
                         removeExtraSpace(row.Description).indexOf(removeExtraSpace(location.state.ReportType)) !== -1
                     );
