@@ -7,22 +7,16 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { useSelector, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import List from "@material-ui/core/List";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ListAltIcon from "@material-ui/icons/ListAlt";
-import SettingsIcon from "@material-ui/icons/Settings";
-import CalculateIcon from "@mui/icons-material/Calculate";
-import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ListItemButton from "@mui/material/ListItemButton";
-import { logOutEmployee } from "../reduxAction/authorised";
 import { mainAppBarColor, mainAppBarTextColor } from "../Constants";
 import NhmsBanner from "../Images/NhmsBanner.png";
-import AlarmIcon from "@mui/icons-material/Alarm";
 import { activeDirectoryService } from '../services/authPopup';
 import GroupIcon from "@mui/icons-material/Group";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -58,13 +52,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-  let navigate = useNavigate(); 
-
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-  const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
-  
+  const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+  const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;    
   const classes = useStyles();
   const cookies = new Cookies();
+  const oid =  cookies.get('oid');
   const { instance } = useMsal();
   
   var [permissionDetails, setPermissionDetails] = useState([]);
@@ -75,6 +67,7 @@ const ManagerAppBar = (props) => {
   const [drawer, setDrawer] = useState(false);
   const [dmmenuopen, setDMOpen] = useState(false);
   const [reportmenuopen, setReportOpen] = useState(false);
+  const [cmsapimenuopen, setCmsApiOpen] = useState(false);
   const [location, setLocation] = useState("Home");
   const [anchorEl, setAnchorEl] = useState(null);
   const [isProfileSwitched, setIsProfileSwitched] = useState(localStorage.getItem('IsProfileSwitched'));
@@ -93,6 +86,7 @@ const ManagerAppBar = (props) => {
     }
     setDrawer(open);
   };
+  // const [location, setLocation] = useState("Home");
 
   // useEffect(() => {
   //   setLocation(props.location);
@@ -106,7 +100,7 @@ const ManagerAppBar = (props) => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' +token, //JSON.parse(localStorage.getItem('currentUser')).token,
-          'oid': cookies.get('oid')
+          'oid': oid
         },
         body: JSON.stringify({ 'objectId': objectId }),
       };    
@@ -127,7 +121,7 @@ const ManagerAppBar = (props) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,//JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
+        'oid': oid
       },
       body: JSON.stringify({ 'objectId': objectId, 'clientId': authenticationService.clientId }),
     };
@@ -146,7 +140,7 @@ const ManagerAppBar = (props) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
-        'oid': cookies.get('oid')
+        'oid': oid
       },
       body: JSON.stringify({ 'objectId': objectId }),
     };
@@ -173,6 +167,9 @@ const ManagerAppBar = (props) => {
 
   const handleReportClick = () => {
     setReportOpen(!reportmenuopen);
+  };
+  const handleCmsApiClick = () => {
+    setCmsApiOpen(!cmsapimenuopen);
   };
 
   const handleNameClick = (event) => {
@@ -385,6 +382,50 @@ const ManagerAppBar = (props) => {
                         <ListItemButton sx={{ pl: 4 }}>
                           <ListItemText
                             primary="Price Report"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                </List>
+              </Collapse>
+
+              <ListItemButton onClick={handleCmsApiClick}>
+                <ListItemIcon>
+                  <GroupIcon style={{ color: "#3F51B5" }} />
+                </ListItemIcon>
+                <ListItemText primary="CMS API" />
+                {cmsapimenuopen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={cmsapimenuopen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.DMEService, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to="/CMSApi/DMEService"
+                        style={{ textDecoration: "none", color: "black" }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="DME Service"
+                            classes={{ primary: classes.listItemText }}
+                          />
+                        </ListItemButton>
+                      </Link>
+                      : <></>
+                  }
+                  {
+                    PermissionProvider({ permissionDetails: permissionDetails, moduleName: ModuleName.DMEGeography, permissionLevel: "Read" }) ?
+
+                      <Link
+                        to="/CMSApi/DMEGeography"
+                        style={{ textDecoration: "none", color: "black" }}
+                      >
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            primary="DME Geography"
                             classes={{ primary: classes.listItemText }}
                           />
                         </ListItemButton>
