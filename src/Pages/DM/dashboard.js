@@ -1,6 +1,6 @@
 import ManagerAppbar from "../../components/ManagerAppBar";
 import IFrame from "../../components/IFrame";
-import authorised from "../../reduxReduncer/authorised";
+import {authorised} from "../../reduxReduncer/authorised";
 import React, { useState, useEffect } from "react";
 import { backgroundColor } from "../../Constants";
 import { createStore, combineReducers } from 'redux';
@@ -8,6 +8,7 @@ import { Typography } from "@material-ui/core";
 import { Provider } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import Cookies from 'universal-cookie';
+import { authenticationService } from '../../services/authentication.service';
 
 function DMDashboardPage() {
     let location = useLocation();

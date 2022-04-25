@@ -1,4 +1,7 @@
-export default (authorised = [], action) => {
+
+
+
+export function authorised(authorised = [], action) {
     switch (action.type) {
       case "AUTHORISED_LOGIN":
         return action.payload;

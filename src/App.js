@@ -17,32 +17,34 @@ import {
 import { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
 import { ModuleName } from './helpers/enum/Module_Enum';
+import { authenticationService } from './services/authentication.service';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState();
-  const [isAdmin, setIsAdminFlag] = useState();
-  var [permissionDetails, setPermissionDetails] = useState([]);
-  useEffect(async () => {
-    const cookies = new Cookies();
-    var requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
-        'oid': cookies.get('oid')
-      },
-      body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId, 'clientId': authenticationService.clientId }),
-    };
-    await fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
-      .then((response) => response.json())
-      .then(async result => {
-        if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
-        {
-          setPermissionDetails(result.result);
-          localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
-        }
-    });
 
+  var [permissionDetails, setPermissionDetails] = useState([]);
+  useEffect( () => {
+    async function getPermission(){
+      const cookies = new Cookies();
+      var requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser')).token,
+          'oid': cookies.get('oid')
+        },
+        body: JSON.stringify({ 'objectId': JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId, 'clientId': authenticationService.clientId }),
+      };
+      await fetch(process.env.REACT_APP_SERVER_BASE_URL + 'user/getUserPermissionByObjectId', requestOptions)
+        .then((response) => response.json())
+        .then(async result => {
+          if(result.message !== 'Unauthorized' && result.message !== "unable to fetch record")
+          {
+            setPermissionDetails(result.result);
+            localStorage.setItem('UserRole', JSON.stringify({ permissionLevelId: result.result[0].PermissionLeveId }));
+          }
+        });
+    }
+    getPermission()
   },[]);
 
   return (

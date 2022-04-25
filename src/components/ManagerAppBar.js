@@ -27,7 +27,7 @@ import { useMsal } from "@azure/msal-react";
 import { authenticationService } from '../services/authentication.service';
 import Cookies from 'universal-cookie';
 import { ModuleName } from '../helpers/enum/Module_Enum';
-import { renderSwitch } from '../helpers/UrlModuleMapper';
+// import { renderSwitch } from '../helpers/UrlModuleMapper';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -52,11 +52,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ManagerAppBar = (props) => {
-  const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
-  const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;    
+  
   const classes = useStyles();
-  const cookies = new Cookies();
-  const oid =  cookies.get('oid');
+
+ 
   const { instance } = useMsal();
   
   var [permissionDetails, setPermissionDetails] = useState([]);
@@ -68,7 +67,6 @@ const ManagerAppBar = (props) => {
   const [dmmenuopen, setDMOpen] = useState(false);
   const [reportmenuopen, setReportOpen] = useState(false);
   const [cmsapimenuopen, setCmsApiOpen] = useState(false);
-  const [location, setLocation] = useState("Home");
   const [anchorEl, setAnchorEl] = useState(null);
   const [isProfileSwitched, setIsProfileSwitched] = useState(localStorage.getItem('IsProfileSwitched'));
   const open = Boolean(anchorEl);
@@ -91,8 +89,11 @@ const ManagerAppBar = (props) => {
   //   setLocation(props.location);
   // }, props.location);
 
-  useEffect(() => {    
-
+  useEffect(() => {  
+    const cookies = new Cookies();  
+    const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+    const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;    
+    const oid =  cookies.get('oid');
     if(!isProfileSwitched){     
       var requestOptions = {
         method: 'POST',
@@ -153,7 +154,7 @@ const ManagerAppBar = (props) => {
         }
     });
   
-  }, []);
+  }, [isProfileSwitched]);
 
 
   const handleLogOut = () => {

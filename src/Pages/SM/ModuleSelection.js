@@ -1,6 +1,6 @@
 import { backgroundColor} from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
-import authorised from "../../reduxReduncer/authorised";
+import {authorised} from "../../reduxReduncer/authorised";
 import React from "react";
 import { Link } from "react-router-dom";
 import { createStore, combineReducers } from 'redux';

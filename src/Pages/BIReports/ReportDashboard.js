@@ -1,4 +1,4 @@
-import authorised from "../../reduxReduncer/authorised";
+import {authorised} from "../../reduxReduncer/authorised";
 import { backgroundColor } from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
 import IFrame from "../../components/IFrame";
@@ -49,7 +49,7 @@ function DMDashboardPage() {
             .then((response) => {
                 if (response.message !== 'Unauthorized' && response.message !== 'unable to fetch record') {
                     const selectedType = response.data.filter(row =>
-                        removeExtraSpace(row.Description) == removeExtraSpace(location.state.ReportType)
+                        removeExtraSpace(row.Description) === removeExtraSpace(location.state.ReportType)
                     );
                     if (selectedType.length > 0) {
                         setreportTypeIframeLink(selectedType[0].Iframe);

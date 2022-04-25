@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { authenticationService } from '../services/authentication.service';
-import { backgroundColor, buttonColor, buttonTextColor } from "../Constants";
+import { backgroundColor } from "../Constants";
 import ManagerAppbar from "../components/ManagerAppBar";
 import { createStore, combineReducers } from 'redux';
-import authorised from "../reduxReduncer/authorised";
+import {authorised} from "../reduxReduncer/authorised";
 import logo from "../Images/logo.png";
 import { useIsAuthenticated } from "@azure/msal-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { activeDirectoryService } from '../services/authPopup';
 import { useMsal } from "@azure/msal-react";
 import Cookies from 'universal-cookie';
@@ -17,14 +17,11 @@ import {
   } from "@material-ui/core";
 
 const HomePage = (props) => {
-    var cookies =  new Cookies();
-   
+    var cookies =  new Cookies();   
     const history = useNavigate();
-    const { instance } = useMsal();
-    const location = useLocation();
     const isAuthenticated = useIsAuthenticated();
-    const [currentUser, setUser] = useState(authenticationService.currentUserValue);
-    const [drawers, setDrawer] = useState("");
+    const { instance } = useMsal();
+    const currentUser = authenticationService.currentUserValue;
     const rootReducer = combineReducers({
         authorised
     });
@@ -34,7 +31,7 @@ const HomePage = (props) => {
         if (isAuthenticated) {            
             history('/');            
         }       
-    }, [])
+    }, [history,isAuthenticated ])
     
     const handleLogin = () => {
         activeDirectoryService.signIn(instance);
@@ -66,7 +63,7 @@ const HomePage = (props) => {
         <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
             {isAuthenticated ? <>
                 <Provider store={store}>
-                    <ManagerAppbar drawerOption={drawers} location="Home" />
+                    <ManagerAppbar drawerOption="" location="Home" />
                 </Provider>
                 <div
                     style={{

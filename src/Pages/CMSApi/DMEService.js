@@ -5,13 +5,12 @@ import ManagerAppbar from "../../components/ManagerAppBar";
 import { Typography } from "@material-ui/core";
 import { backgroundColor} from "../../Constants";
 import { createStore, combineReducers } from 'redux';
-import authorised from "../../reduxReduncer/authorised";
+import {authorised} from "../../reduxReduncer/authorised";
 
 
 function App() {
-  const [data,setData] = useState([]);
-  const [drawers, setDrawer] = useState("");
-  const [size, setSize] = useState(5000);
+  
+  const size = 5000;
   const [rowInserted, setRowInserted] = useState(0);
   const [fetchingFinishedLabel, setFetchingFinishedLabel] = useState("");
   const rootReducer = combineReducers({
@@ -19,82 +18,92 @@ function App() {
   });
   const store = createStore(rootReducer);
   
-  useEffect( async () => {
+  useEffect( () => {
+
+    async function startProcess(){
+
+      const cookies = new Cookies();
+      
+      
+      await fetch(
+                    process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DmeDeleteExistingData', {
+                    method: 'POST',            
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
+                        'oid': cookies.get('oid')
+                    },
+                    body: JSON.stringify({tableName: 'DME_Service'})
+      })
+     .then(async ()=>{
+      //let rowsReturned=0;
+      // var offset = 0;
+      // var fetchingFinished = 0;
+    
+        do {
+          let offset = parseInt(localStorage.getItem('offset') ?? 0);
+            console.log(size, offset);
+            await fetch("https://data.cms.gov/data-api/v1/dataset/d6d3de93-0579-408a-bcfe-c319f04069e7/data?size="+size+"&offset="+offset, 
+            {
+              method: "GET",
+              headers: {
+                  "accept": "application/json"
+              }
+            })
+            .then(async (response) => 
+              response.json()
+            )
+            .then(async (response) => {
+                setFetchingFinishedLabel("");
+               // rowsReturned = response.length;
+                if(response.length < size)
+                  localStorage.setItem('fetchingFinished', 1);
+                  //fetchingFinished = 1;
+                                
+                await fetch(
+                      process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEServiceDataStorage', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
+                          'oid': cookies.get('oid')
+                      },
+                      body: JSON.stringify(response)
+                })
+                .then(async (response) => 
+                      response.json()       
+                )
+                .then(async (response) => {
+                      if(response.success)
+                      {
+                        offset = (offset+5000);
+                        setRowInserted(offset);
+                        localStorage.setItem('offset', offset);
+                      }
+                      else{
+                        //fetchingFinished = 1;
+                        localStorage.setItem('fetchingFinished', 1);
+                        alert("unable to store record : "+ response.message);                  
+                      }
+                })
+            })
+        } while (!parseInt(localStorage.getItem('fetchingFinished')))
+        
+        if(parseInt(localStorage.getItem('fetchingFinished'))){
+          setFetchingFinishedLabel("Storing process finished. You can leave this page.");
+        }
+      });
+    }
+
     var proceed = window.confirm("Are you sure you want to start fetch and store process? It might take significant time to pull all records and store into database");
     if (proceed) {
       startProcess();
     } else {
       alert("Process wasn't initiated");
     }
+    localStorage.setItem('fetchingFinished', 0);
+    localStorage.setItem('offset', 0);
   }, [])
-
-const startProcess = async ()=>{
-
-  const cookies = new Cookies();
-  var rowsReturned=0;
-  var offset = 0;
-  var fetchingFinished = 0;
-
-  await fetch(
-                process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DmeDeleteExistingData', {
-                method: 'POST',            
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
-                    'oid': cookies.get('oid')
-                },
-                body: JSON.stringify({tableName: 'DME_Service'})
-  })
- .then(async ()=>{
-    do {
-        console.log(size, offset);
-        await fetch("https://data.cms.gov/data-api/v1/dataset/d6d3de93-0579-408a-bcfe-c319f04069e7/data?size="+size+"&offset="+offset, 
-        {
-          method: "GET",
-          headers: {
-              "accept": "application/json"
-          }
-        })
-        .then(async (response) => 
-          response.json()
-        )
-        .then(async (response) => {
-            setFetchingFinishedLabel("");
-            rowsReturned = response.length;
-            if(rowsReturned < size)
-              fetchingFinished = 1;
-                            
-            await fetch(
-                  process.env.REACT_APP_SERVER_BASE_URL + 'cmsapi/DMEServiceDataStorage', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('currentUser'))?.token,
-                      'oid': cookies.get('oid')
-                  },
-                  body: JSON.stringify(response)
-            })
-            .then(async (response) => 
-                  response.json()       
-            )
-            .then(async (response) => {
-                  if(response.success)
-                  {
-                    offset = (offset+5000);
-                    setRowInserted(offset);
-                  }
-                  else{
-                    return;
-                    alert("unable to store record : "+ response.message);                  
-                  }
-            })
-        })
-    } while (!fetchingFinished)
-    if(fetchingFinished){
-      setFetchingFinishedLabel("Storing process finished. You can leave this page.");
-    }
-  });
-}
 
 const Panel = (props) => {
   return (
@@ -106,7 +115,7 @@ const Panel = (props) => {
   return (
     <div style={{ minHeight: "100vh", backgroundImage: backgroundColor }}>
     <Provider store={store}>
-        <ManagerAppbar drawerOption={drawers} location="Home" />
+        <ManagerAppbar drawerOption="" location="Home" />
     </Provider>
 
     <Panel value={1} index={1}>
