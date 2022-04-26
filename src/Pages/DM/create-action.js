@@ -1,11 +1,10 @@
 import React from "react";
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
+import { backgroundColor } from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
 import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
-import authorised from "../../reduxReduncer/authorised";
+import { Typography } from "@material-ui/core";
+import {authorised} from "../../reduxReduncer/authorised";
 import { Provider } from 'react-redux';
-import { authenticationService } from '../../services/authentication.service';
 import Cookies from 'universal-cookie';
 var cookies = null;
 

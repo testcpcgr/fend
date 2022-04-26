@@ -1,11 +1,9 @@
-import { authenticationService } from '../../services/authentication.service';
-import { backgroundColor, buttonColor, buttonTextColor } from "../../Constants";
+import { backgroundColor } from "../../Constants";
 import ManagerAppbar from "../../components/ManagerAppBar";
-import authorised from "../../reduxReduncer/authorised";
+import {authorised} from "../../reduxReduncer/authorised";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { createStore, combineReducers } from 'redux';
-import { AppBar, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Provider } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import { format } from 'react-string-format';
@@ -17,10 +15,11 @@ const FileUpload = (props) => {
     const [nameOfColumns, setRequiredNameOfColumns] = useState([]);
     const [filenames, setFileNames] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");    
-    const [drawers, setDrawer] = useState("");
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('currentUser'))?.token);
-    const [objectId, setObjectId] = useState(JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId);
+    const drawers = "";
+    const token = JSON.parse(localStorage.getItem('currentUser'))?.token;
+    const objectId = JSON.parse(localStorage.getItem('currentUser'))?.account.localAccountId;
     const cookies = new Cookies();
+    const oid =  cookies.get('oid');
     const rootReducer = combineReducers({
         authorised
     });
@@ -39,14 +38,14 @@ const FileUpload = (props) => {
         const list = [];
         for (let i = 1; i < dataStringLines.length; i++) {
             const row = dataStringLines[i].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
-            if (headers && row.length == headers.length) {
+            if (headers && row.length === headers.length) {
                 const obj = {};
                 for (let j = 0; j < headers.length; j++) {
                     let d = row[j];
                     if (d.length > 0) {
-                        if (d[0] == '"')
+                        if (d[0] === '"')
                             d = d.substring(1, d.length - 1);
-                        if (d[d.length - 1] == '"')
+                        if (d[d.length - 1] === '"')
                             d = d.substring(d.length - 2, 1);
                     }
                     if (headers[j]) {
@@ -67,7 +66,7 @@ const FileUpload = (props) => {
 
     const handleFileUpload = e => {
         setErrorMessage("");
-        const requiredInfo = filenames.filter(s => s.FileName == e.target.name);
+        const requiredInfo = filenames.filter(s => s.FileName === e.target.name);
         if (requiredInfo.some(x => x.FileName !== e.target.files[0].name.split(".")[0])) {
             setErrorMessage(format('Uploaded file must has name "{0}"', e.target.name));
         }
@@ -95,7 +94,7 @@ const FileUpload = (props) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
-                    'oid': cookies.get('oid')
+                    'oid':oid
                 },
                 body: JSON.stringify({ 'FileTypeIds': items.toString() })
             };
@@ -142,11 +141,11 @@ const FileUpload = (props) => {
                     alert(error);
                 });
         }
-    }, []);
+    }, [token, oid, location.state]);
 
     const handleSubmission = (e) => {
         e.preventDefault();
-        if (errorMessage != " " || errorMessage != "") {
+        if (errorMessage !== " " || errorMessage !== "") {
             const formData = new FormData(e.target);
 
             formData.append('auth', token);
@@ -168,7 +167,7 @@ const FileUpload = (props) => {
                 // .then((response) => { response.json(); })
                 .then((response) => {
                     response.json();                   
-                    if (response.status == 200) {
+                    if (response.status === 200) {
                         alert('File upload Status is :' + response.statusText);
                         window.location.href = "/?msg=" + response.statusText;
                     }
@@ -186,8 +185,8 @@ const FileUpload = (props) => {
     };
 
     const validateColumnNames = (filetypeid, fileColNames) => {
-        nameOfColumns.filter(s => s.FileTypeId == filetypeid).forEach(colName => {
-            if (!fileColNames.some(e => e.name == colName.ColumnName)) {
+        nameOfColumns.filter(s => s.FileTypeId === filetypeid).forEach(colName => {
+            if (!fileColNames.some(e => e.name === colName.ColumnName)) {
                 setErrorMessage(format('Column name {0} required in uploaded file', colName.ColumnName));
             }
         });
