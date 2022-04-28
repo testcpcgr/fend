@@ -38,7 +38,8 @@ class MyForm extends React.Component {
                 'oid': cookies.get('oid')
             },
             body: JSON.stringify({
-                objectId: this.state.objectId
+                objectId: this.state.objectId,
+                clientId: JSON.parse(localStorage.getItem('ClientId')) ?? 0
             })
         })
             .then((response) => response.json())
