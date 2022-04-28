@@ -21,7 +21,7 @@ const HomePage = (props) => {
     const history = useNavigate();
     const isAuthenticated = useIsAuthenticated();
     const { instance } = useMsal();
-    const currentUser = authenticationService.currentUserValue;
+    //const currentUser = authenticationService.currentUserValue;
     const rootReducer = combineReducers({
         authorised
     });
@@ -35,7 +35,7 @@ const HomePage = (props) => {
     
     const handleLogin = () => {
         activeDirectoryService.signIn(instance);
-        if (currentUser !== null) {
+        if (JSON.parse(localStorage.getItem('currentUser')) !== null) {
             var requestOptions = {
                 method: 'POST',
                 headers: {

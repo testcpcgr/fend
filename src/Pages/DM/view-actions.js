@@ -260,55 +260,53 @@ class ViewActions extends React.Component {
                 </Provider>
                 <Panel value={1} index={1}>
                     <h3>{this.state.error}</h3>
-                    <h1>Driver monitoring: All monitoring actions</h1>
-                    {/* created actions list */}
-                    {this.state.actionList.length > 0 ?
-                    <table className='center'>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Dispostion Type</th>
-                                <th>Note</th>
-                                {
-                                   <th>Status</th>}
-                                <th>Response note</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.actionList.map(action => (
-                                <tr key={action.Id}>
-                                    <td >{(action.createdat.getDate()).toString()}/{(action.createdat.getMonth()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
-                                    <td >{action.disposition_type}</td>
-                                    <td >{action.notes}</td>
+                    <h1>Driver monitoring: All monitoring actions</h1>                    
+                    {
+                        this.state.actionList.length > 0 ?
+                        <table className='center'>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Dispostion Type</th>
+                                    <th>Note</th>
                                     {
-                                       <td >
-                                                <select name='status_id' actionid={action.id} value={action.Status} onChange={e => this.updateActionStatus(e)}>
-                                                    {this.state.StatusList.map(status => (
-                                                        <option key={status.Id} name='status_id' value={status.Id} >{status.Status}</option>
-                                                    ))}
-                                                </ select>
-                                            </td>
+                                    <th>Status</th>
                                     }
-                                    <td>
-                                        <button id={action.id}
-
-                                            onClick={() => this.openChat(action.id)}
-                                        >
-                                            Open chat
-                                        </button>
-                                    </td>
-                                    <td><button id={action.id}
-                                        onClick={() => this.addNotes(action.id)}
-                                    >
-                                        Add comment
-                                    </button></td>
+                                    <th>Response note</th>
+                                    <th>Edit</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    :<></>
-    }
+                            </thead>
+                            <tbody>
+                                {this.state.actionList.map(action => (
+                                    <tr key={action.Id}>
+                                        <td >{(action.createdat.getMonth()).toString()}/{(action.createdat.getDate()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
+                                        <td >{action.disposition_type}</td>
+                                        <td >{action.notes}</td>
+                                        {
+                                        <td >
+                                                    <select name='status_id' actionid={action.id} value={action.Status} onChange={e => this.updateActionStatus(e)}>
+                                                        {this.state.StatusList.map(status => (
+                                                            <option key={status.Id} name='status_id' value={status.Id} >{status.Status}</option>
+                                                        ))}
+                                                    </ select>
+                                            </td>
+                                        }
+                                        <td>
+                                            <button id={action.id} onClick={() => this.openChat(action.id)}>
+                                                Open chat
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button id={action.id} onClick={() => this.addNotes(action.id)} >
+                                                Add comment
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        :<></>
+                    }
                     {/* assigned actions list */}
                     {this.state.assignedActionList.length > 0 ?
                     <table className='center'>
@@ -316,10 +314,8 @@ class ViewActions extends React.Component {
                             <tr>
                                 <th>Date</th>
                                 <th>Dispostion Type</th>
-                                <th>Note</th>
-                                
-                                        <th>Response Type</th>
-                                        
+                                <th>Note</th>                                
+                                <th>Response Type</th>                                        
                                 <th>Response note</th>
                                 <th>Edit</th>
                             </tr>
@@ -327,33 +323,28 @@ class ViewActions extends React.Component {
                         <tbody>
                             {this.state.assignedActionList.map(action => (
                                 <tr key={action.Id}>
-                                    <td >{(action.createdat.getDate()).toString()}/{(action.createdat.getMonth()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
+                                    <td >{(action.createdat.getMonth()).toString()}/{(action.createdat.getDate()).toString()}/{(action.createdat.getFullYear()).toString()}</td>
                                     <td >{action.disposition_type}</td>
                                     <td >{action.notes}</td>
-                                    {
-                                        
-                                            <td >
-                                                <select name='response_type_id' actionid={action.id} value={action.ResponseType} onChange={e => this.submitResponseType(e)}>
+                                    {                                        
+                                        <td >
+                                            <select name='response_type_id' actionid={action.id} value={action.ResponseType} onChange={e => this.submitResponseType(e)}>
                                                     {this.state.responseTypeList.map(response => (
                                                         <option key={response.Id} name='response_type_id' value={response.Id} >{response.Description}</option>
                                                     ))}
-                                                </ select>
-                                            </td>
-                                          
+                                            </ select>
+                                        </td>                                          
                                     }
                                     <td>
-                                        <button id={action.id}
-
-                                            onClick={() => this.openChat(action.id)}
-                                        >
+                                        <button id={action.id} onClick={() => this.openChat(action.id)} >
                                             Open chat
                                         </button>
                                     </td>
-                                    <td><button id={action.id}
-                                        onClick={() => this.addNotes(action.id)}
-                                    >
-                                        Add comment
-                                    </button></td>
+                                    <td>
+                                        <button id={action.id} onClick={() => this.addNotes(action.id)} >
+                                            Add comment
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
