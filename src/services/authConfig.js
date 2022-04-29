@@ -2,7 +2,8 @@ const msalConfig = {
     auth: {
       clientId: "620d7b48-3b8e-498b-bb58-7fa115bfb0e5",
       authority: "https://login.microsoftonline.com/common",
-      redirectUri: "http://localhost:3000/",
+      //redirectUri: "http://localhost:3000/",
+       redirectUri: "https://www.cpcgr.com/",
     },
     cache: {
       cacheLocation: "sessionStorage", // This configures where your cache will be stored
