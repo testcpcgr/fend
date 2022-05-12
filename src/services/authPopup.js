@@ -5,9 +5,9 @@ import Cookies from 'universal-cookie';
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 // Create the main myMSALObj instance
 // configuration parameters are located at authConfig.js
-//const myMSALObj = new PublicClientApplication(msalConfig);
+const myMSALObj = new PublicClientApplication(msalConfig);
 
-//let username = "";
+let username = "";
 
 function loadPage(token) {
     /**
